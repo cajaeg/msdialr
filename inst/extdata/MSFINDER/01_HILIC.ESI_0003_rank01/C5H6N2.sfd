@@ -1,0 +1,166 @@
+NAME: Methylpyrazine
+ID: CAWHJQAVHZEVTJ
+IsSpectrumSearch: False
+INCHIKEY: CAWHJQAVHZEVTJ-UHFFFAOYSA-N
+SMILES: N1=CC=NC(=C1)C
+RESOURCES: HMDB=HMDB0033112,ChEBI=CHEBI:89015,FooDB=FDB011112,Feces=HMDB0033112,UNPD=UNPD168399
+SubstructureInChIKeys: VNWKTOKETHGBQD
+SubstructureOntologies: CHEMONTID:0002500
+Ontology: Pyrazines
+OntologyID: CHEMONTID:0000067
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 5600
+TotalScore: 7.1619
+TotalHrRulesScore: 0.8
+TotalBondCleavageScore: 0.494
+TotalMassAccuracyScore: 0.9534
+TotalFragmentLinkageScore: 1
+TotalBondDissociationEnergyScore: 0.8253
+DatabaseScore: 0.619
+SubstructureAssignmentScore: 0.25
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 4
+66.04582	935.3969	66.0338223844359	69.0578460693359	C4H7N	-3	181.66	12	True	True	False	0		651	1	N(=C)C(=C)C	3.78835974030984	1	0.0506249964237213	0.971621870994568	1	0.766112872891555
+67.054049	4559.800925	67.0290769010375	70.0531005859375	C3H6N2	-3	372.42	24.97	True	True	False	0		907	1	N=CC=NC	3.55958630106716	1	0.0253124982118607	0.882743000984192	1	0.651530801871103
+80.048837	10428	80.0368964884594	80.0374450683594	C4H4N2	0	149.17	11.94	False	False	False	0		346	1	N=1C=CN=CC=1	3.95532219876848	0.200000002980232	0.899999976158142	0.971887528896332	1	0.883434690733774
+95.068363	3580.111548	95.0603770410375	94.0531005859375	C5H6N2	1	84	7.99	True	True	False	0		0	0	N1=CC=NC(=C1)C	4.98732590675354	1	1	0.98732590675354	1	1
+
+NAME: 4-aminopyridine
+ID: NUKYPUAOHBNCPY
+IsSpectrumSearch: False
+INCHIKEY: NUKYPUAOHBNCPY-UHFFFAOYSA-N
+SMILES: N1=CC=C(N)C=C1
+RESOURCES: ChEBI=CHEBI:34385,DrugBank=DB06637,T3DB=T3D2553,STOFF=STOFF_10550
+SubstructureInChIKeys: QGZKDVFQNNGYKY;JUJWROOIHBZHMG
+SubstructureOntologies: NonID:NH2;CHEMONTID:0000089
+Ontology: Aminopyridines and derivatives
+OntologyID: CHEMONTID:0000283
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 5537
+TotalScore: 6.1385
+TotalHrRulesScore: 0.5
+TotalBondCleavageScore: 0.3062
+TotalMassAccuracyScore: 0.4968
+TotalFragmentLinkageScore: 0.5
+TotalBondDissociationEnergyScore: 0.25
+DatabaseScore: 0.5952
+SubstructureAssignmentScore: 0
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+80.048837	10428	80.0494746362523	79.0421981811523	C5H5N	1	7.97	0.64	True	True	False	0		305	1	N1=CC=CC=C1	3.22491869330406	1	0.224999994039536	0.999918699264526	1	0
+95.068363	3580.111548	95.0603770410375	94.0531005859375	C5H6N2	1	84	7.99	True	True	False	0		0	0	N1=CC=C(N)C=C1	4.98732590675354	1	1	0.98732590675354	1	1
+
+NAME: Glutaronitrile
+ID: ZTOMUSMDRMJOTH
+IsSpectrumSearch: False
+INCHIKEY: ZTOMUSMDRMJOTH-UHFFFAOYSA-N
+SMILES: N#CCCCC#N
+RESOURCES: T3DB=T3D1703,UNPD=UNPD15971
+SubstructureInChIKeys: LELOWRISYMNNSU;OTMSDBZUPAUEDD;ATUOYWHBWRKTHZ;IJDNQMDRQITEOD;OFBQJSOFQDEBGM
+SubstructureOntologies: CHEMONTID:0000362;CHEMONTID:0002500
+Ontology: Nitriles
+OntologyID: CHEMONTID:0000362
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 5624
+TotalScore: 6.3166
+TotalHrRulesScore: 0.3
+TotalBondCleavageScore: 0.475
+TotalMassAccuracyScore: 0.4893
+TotalFragmentLinkageScore: 0.5
+TotalBondDissociationEnergyScore: 0.4743
+DatabaseScore: 0.5476
+SubstructureAssignmentScore: 0.2
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+67.054049	4559.800925	67.0416474194359	69.0578460693359	C4H7N	-2	184.95	12.4	False	False	False	0		346	1	N#CCCC	3.96690435424578	0.200000002980232	0.899999976158142	0.969708442687988	1	0.897195932419415
+95.068363	3580.111548	95.0603770410375	94.0531005859375	C5H6N2	1	84	7.99	True	True	False	0		0	0	N#CCCCC#N	4.98732590675354	1	1	0.98732590675354	1	1
+
+NAME: 2-pyridylamine
+ID: ICSNLGPSRYBMBD
+IsSpectrumSearch: False
+INCHIKEY: ICSNLGPSRYBMBD-UHFFFAOYSA-N
+SMILES: N1=CC=CC=C1N
+RESOURCES: STOFF=STOFF_7389,UNPD=UNPD191764
+SubstructureInChIKeys: QGZKDVFQNNGYKY;JUJWROOIHBZHMG
+SubstructureOntologies: NonID:NH2;CHEMONTID:0000089
+Ontology: Aminopyridines and derivatives
+OntologyID: CHEMONTID:0000283
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 5537
+TotalScore: 6.0546
+TotalHrRulesScore: 0.5
+TotalBondCleavageScore: 0.475
+TotalMassAccuracyScore: 0.4968
+TotalFragmentLinkageScore: 0.5
+TotalBondDissociationEnergyScore: 0.25
+DatabaseScore: 0.5476
+SubstructureAssignmentScore: 0
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+80.048837	10428	80.0494746362523	79.0421981811523	C5H5N	1	7.97	0.64	True	True	False	0		305	1	N=1C=CC=CC=1	3.89991867542267	1	0.899999976158142	0.999918699264526	1	0
+95.068363	3580.111548	95.0603770410375	94.0531005859375	C5H6N2	1	84	7.99	True	True	False	0		0	0	N1=CC=CC=C1N	4.98732590675354	1	1	0.98732590675354	1	1
+
+NAME: 1-vinylimidazole
+ID: OSSNTDFYBPYIEC
+IsSpectrumSearch: False
+INCHIKEY: OSSNTDFYBPYIEC-UHFFFAOYSA-N
+SMILES: N=1C=CN(C=1)C=C
+RESOURCES: STOFF=STOFF_7511
+SubstructureInChIKeys: VGGSQFUCUMXWEO;RAXXELZNTBOGNW
+SubstructureOntologies: CHEMONTID:0004476;CHEMONTID:0000078
+Ontology: N-substituted imidazoles
+OntologyID: CHEMONTID:0002311
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 5505
+TotalScore: 6.9558
+TotalHrRulesScore: 0.8
+TotalBondCleavageScore: 0.7063
+TotalMassAccuracyScore: 0.939
+TotalFragmentLinkageScore: 1
+TotalBondDissociationEnergyScore: 0.8819
+DatabaseScore: 0.5238
+SubstructureAssignmentScore: 0.2
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 4
+66.04582	935.3969	66.0212464184594	68.0374450683594	C3H4N2	-2	372.07	24.57	False	False	False	0		305	1	N=1C=CNC=1	3.8985545359693	0.200000002980232	0.899999976158142	0.88623583316803	1	0.912318723662901
+67.054049	4559.800925	67.0290714534594	68.0374450683594	C3H4N2	-1	372.5	24.98	True	True	False	0		305	1	N=1C=CNC=1	4.69501365946155	1	0.899999976158142	0.882694959640503	1	0.912318723662901
+80.048837	10428	80.0494779020141	83.0735015869141	C5H9N	-3	8.01	0.64	True	True	False	0		920	1	C=CN(C=C)C	3.728243590185	1	0.0253124982118607	0.9999178647995	1	0.703013227173635
+95.068363	3580.111548	95.0603770410375	94.0531005859375	C5H6N2	1	84	7.99	True	True	False	0		0	0	N=1C=CN(C=1)C=C	4.98732590675354	1	1	0.98732590675354	1	1
+
+NAME: UNPD83055
+ID: CUYKNJBYIJFRCU
+IsSpectrumSearch: False
+INCHIKEY: CUYKNJBYIJFRCU-UHFFFAOYSA-N
+SMILES: N1=CC=CC(N)=C1
+RESOURCES: UNPD=UNPD83055
+SubstructureInChIKeys: QGZKDVFQNNGYKY;JUJWROOIHBZHMG
+SubstructureOntologies: NonID:NH2;CHEMONTID:0000089
+Ontology: Aminopyridines and derivatives
+OntologyID: CHEMONTID:0000283
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 5537
+TotalScore: 5.2451
+TotalHrRulesScore: 0.5
+TotalBondCleavageScore: 0.475
+TotalMassAccuracyScore: 0.4968
+TotalFragmentLinkageScore: 0.5
+TotalBondDissociationEnergyScore: 0.25
+DatabaseScore: 0.2238
+SubstructureAssignmentScore: 0
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+80.048837	10428	80.0494746362523	79.0421981811523	C5H5N	1	7.97	0.64	True	True	False	0		305	1	N=1C=CC=CC=1	3.89991867542267	1	0.899999976158142	0.999918699264526	1	0
+95.068363	3580.111548	95.0603770410375	94.0531005859375	C5H6N2	1	84	7.99	True	True	False	0		0	0	N1=CC=CC(N)=C1	4.98732590675354	1	1	0.98732590675354	1	1
+

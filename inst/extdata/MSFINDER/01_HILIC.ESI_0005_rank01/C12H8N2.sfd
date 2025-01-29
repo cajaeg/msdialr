@@ -1,0 +1,109 @@
+NAME: 4,7-phenanthroline
+ID: DATYUTWESAKQQM
+IsSpectrumSearch: False
+INCHIKEY: DATYUTWESAKQQM-UHFFFAOYSA-N
+SMILES: N=1C=CC=C3C=1C=CC2=NC=CC=C23
+RESOURCES: ChEBI=CHEBI:36419
+SubstructureInChIKeys: UHOVQNZJYSORNB;JUJWROOIHBZHMG
+SubstructureOntologies: CHEMONTID:0002279;CHEMONTID:0000089
+Ontology: Quinolines and derivatives
+OntologyID: CHEMONTID:0001253
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 10560
+TotalScore: 5.5613
+TotalHrRulesScore: 0.1
+TotalBondCleavageScore: 0.1667
+TotalMassAccuracyScore: 0.1663
+TotalFragmentLinkageScore: 0.1667
+TotalBondDissociationEnergyScore: 0.1667
+DatabaseScore: 0.5238
+SubstructureAssignmentScore: 0.1429
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+180.06592	3837.126242	180.068192264827	180.068740844727	C12H8N2	0	12.62	2.27	False	False	False	0		0	0	N=1C=CC=C3C=1C=CC2=NC=CC=C23	4.1989678889513	0.200000002980232	1	0.998967885971069	1	1
+181.071802	293869.5	181.076017299827	180.068740844727	C12H8N2	1	23.28	4.22	True	True	False	0		0	0	N=1C=CC=C3C=1C=CC2=NC=CC=C23	4.99645256996155	1	1	0.996452569961548	1	1
+
+NAME: 1,10-phenanthroline
+ID: DGEZNRSVGBDHLK
+IsSpectrumSearch: False
+INCHIKEY: DGEZNRSVGBDHLK-UHFFFAOYSA-N
+SMILES: N=2C=CC=C3C=CC1=CC=CN=C1C=23
+RESOURCES: ChEBI=CHEBI:44975,DrugBank=DB02365,T3DB=T3D4815,STOFF=STOFF_4920,ECMDB=ECMDB20221,PlantCyc=O-PHENANTHROLINE
+SubstructureInChIKeys: UHOVQNZJYSORNB;JUJWROOIHBZHMG
+SubstructureOntologies: CHEMONTID:0002279;CHEMONTID:0000089
+Ontology: Phenanthrolines
+OntologyID: CHEMONTID:0001626
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 10560
+TotalScore: 5.8589
+TotalHrRulesScore: 0.1
+TotalBondCleavageScore: 0.1667
+TotalMassAccuracyScore: 0.1663
+TotalFragmentLinkageScore: 0.1667
+TotalBondDissociationEnergyScore: 0.1667
+DatabaseScore: 0.6429
+SubstructureAssignmentScore: 0.1429
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+180.06592	3837.126242	180.068192264827	180.068740844727	C12H8N2	0	12.62	2.27	False	False	False	0		0	0	N=2C=CC=C3C=CC1=CC=CN=C1C=23	4.1989678889513	0.200000002980232	1	0.998967885971069	1	1
+181.071802	293869.5	181.076017299827	180.068740844727	C12H8N2	1	23.28	4.22	True	True	False	0		0	0	N=2C=CC=C3C=CC1=CC=CN=C1C=23	4.99645256996155	1	1	0.996452569961548	1	1
+
+NAME: 1,7-phenanthroline
+ID: OZKOMUDCMCEDTM
+IsSpectrumSearch: False
+INCHIKEY: OZKOMUDCMCEDTM-UHFFFAOYSA-N
+SMILES: N=1C=CC=C3C=1C=CC2=CC=CN=C23
+RESOURCES: ChEBI=CHEBI:36418
+SubstructureInChIKeys: UHOVQNZJYSORNB;JUJWROOIHBZHMG
+SubstructureOntologies: CHEMONTID:0002279;CHEMONTID:0000089
+Ontology: Phenanthrolines
+OntologyID: CHEMONTID:0001626
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 10560
+TotalScore: 5.5613
+TotalHrRulesScore: 0.1
+TotalBondCleavageScore: 0.1667
+TotalMassAccuracyScore: 0.1663
+TotalFragmentLinkageScore: 0.1667
+TotalBondDissociationEnergyScore: 0.1667
+DatabaseScore: 0.5238
+SubstructureAssignmentScore: 0.1429
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 2
+180.06592	3837.126242	180.068192264827	180.068740844727	C12H8N2	0	12.62	2.27	False	False	False	0		0	0	N=1C=CC=C3C=1C=CC2=CC=CN=C23	4.1989678889513	0.200000002980232	1	0.998967885971069	1	1
+181.071802	293869.5	181.076017299827	180.068740844727	C12H8N2	1	23.28	4.22	True	True	False	0		0	0	N=1C=CC=C3C=1C=CC2=CC=CN=C23	4.99645256996155	1	1	0.996452569961548	1	1
+
+NAME: phenazine
+ID: PCNDJXKNXGMECE
+IsSpectrumSearch: False
+INCHIKEY: PCNDJXKNXGMECE-UHFFFAOYSA-N
+SMILES: N1=C3C=CC=CC3(=NC2=CC=CC=C12)
+RESOURCES: ChEBI=CHEBI:36674,PubChem=4757,UNPD=UNPD78441
+SubstructureInChIKeys: UHOVQNZJYSORNB
+SubstructureOntologies: CHEMONTID:0002279
+Ontology: Phenazines and derivatives
+OntologyID: CHEMONTID:0000416
+RETENTIONTIME: -1
+RETENTIONINDEX: -1
+TotalBondEnergy: 10560
+TotalScore: 5.7241
+TotalHrRulesScore: 0.1833
+TotalBondCleavageScore: 0.1709
+TotalMassAccuracyScore: 0.2399
+TotalFragmentLinkageScore: 0.25
+TotalBondDissociationEnergyScore: 0.2258
+DatabaseScore: 0.5714
+SubstructureAssignmentScore: 0.0714
+RtSimilarityScore: -1
+RiSimilarityScore: 0
+Num Fragment VS2 (M/Z Intensity MatchedExactMass SaturatedExactMass Formula RearrangedHydrogen PPM MassDiff_mDa IsEvenElectronRule IsHrRule IsSolventAdductFragment AssignedAdductMass AdductString BondDissociationEnergy TreeDepth SMILES TotalScore HrLikelihood BcLikelihood MaLikelihood FlLikelihood BeLikelihood): 3
+79.029314	281.756102	79.0542277490453	78.0469512939453	C6H6	1	315.25	24.91	True	True	False	0		610	1	C1=CC=CC=C1	3.64385746778197	1	0.0506249964237213	0.88325709104538	1	0.709975380312872
+180.06592	3837.126242	180.068192264827	180.068740844727	C12H8N2	0	12.62	2.27	False	False	False	0		0	0	N1=C3C=CC=CC3(=NC2=CC=CC=C12)	4.1989678889513	0.200000002980232	1	0.998967885971069	1	1
+181.071802	293869.5	181.076017299827	180.068740844727	C12H8N2	1	23.28	4.22	True	True	False	0		0	0	N1=C3C=CC=CC3(=NC2=CC=CC=C12)	4.99645256996155	1	1	0.996452569961548	1	1
+

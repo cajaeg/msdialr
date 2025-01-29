@@ -1,0 +1,37 @@
+Package: msdialr
+Type: Package
+Title: Post-process MS-DIAL results in R
+Version: 0.1
+Authors@R: 
+  person("Carsten", "Jaeger", 
+  email = "carsten.jaeger@bam.de", 
+  role = c("aut", "cre"),
+  comment = c(ORCID = "0000-0003-2192-1792"))
+Description: This package provides functions for post-processing MS-DIAL (https://doi.org/10.1038/nmeth.3393) results in R. Import MS-DIAL alignment files, filter features, normalize intensities, and add annotation data from e.g. MS-FINDER, MSPepSearch and ClassyFire. Plot functions for mass spectra and chromatograms allow creating of simple QC plots.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports: 
+  methods, 
+  utils,
+  graphics,
+  plyr,
+  fastcluster,
+  dplyr,
+  purrr,
+  tibble,
+  tidyr,
+  tidyselect,
+  HiResTEC,
+  enviPat,
+  rlang
+Suggests:
+  parallel,
+  webchem,
+  xcms,
+  MetabolomicsBasics,
+  rcdk,
+  classyfireR,
+  DBI
