@@ -427,7 +427,10 @@ findLatestHeightFile <- function(path = ".", pattern = "Height.*_[0-9]+\\.txt", 
 #' @param n_digits n_digits
 #'
 #' @returns character()
-#' @noRd
+#' @export
+#' @examples
+#' formatNumericIDs(1:10)
+#' formatNumericIDs(1:1000)[1:10]
 formatNumericIDs <- function(x,
                              prefix = "",
                              n_digits = NULL) {

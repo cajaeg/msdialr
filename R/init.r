@@ -17,7 +17,7 @@
     } else {
       if(!file.exists(getOption(names(msdialr_options)[i]))) 
         packageStartupMessage(sprintf(
-          "Warning: option '%s' does not point to valid file",
+          "Warning: option '%s' not set to valid file",
           names(msdialr_options)[i]
         ))
     }
