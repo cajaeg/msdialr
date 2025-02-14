@@ -39,10 +39,10 @@ assignAdductGroups <- function(x,
   msg("Grouping neutral masses ...", verbose)
   nm_group <- hcgroup(nm, h = delta_mz)
   msg("Grouping retention times ...", verbose)
-  rt_group <- hcgroup(nm, h = delta_rt)
-  feat_group <- paste(nm_group, rt_group)
+  rt_group <- hcgroup(rt, h = delta_rt)
+  feat_group <- paste(nm_group, rt_group, sep = "_")
   nm_group_lbl <- round(stats::ave(nm, feat_group, FUN = stats::median), mz_digits)
-  rt_group_lbl <- round(stats::ave(rt, rt_group, FUN = stats::median), rt_digits)
+  rt_group_lbl <- round(stats::ave(rt, feat_group, FUN = stats::median), rt_digits)
   feat_group_lbl <- sprintf("%.3f_%.2f", nm_group_lbl, rt_group_lbl)
   group_size <- as.integer(stats::ave(adduct_type, feat_group, FUN = length_unique))
   x$feat_group <- feat_group_lbl
@@ -78,12 +78,12 @@ filterAdductGroupsBySize <- function(x,
 #' Remove features with bad MS/MS spectra
 #'
 #' @param x MS-DIAL alignment results table
-#' @param feat_group_column name of column (default: "feat_group")
-#' @param ms2_column name of column (default: "ms2")
-#' @param min_tic minimum summed intensity of MS/MS spectrum
-#' @param min_ions minimum number of ions of MS/MS spectrum
-#' @param keep_all_adducts keep all or only adduct with best MS/MS spectrum
-#'   within each feature group
+#' @param feat_group_column name of feature group column, default: "feat_group"
+#' @param ms2_column name of MS/MS spectrum column, default: "ms2"
+#' @param min_tic minimum summed intensity required for MS/MS spectra to be kept
+#' @param min_ions minimum number of ions required for MS/MS spectra to be kept
+#' @param keep_all_adducts if TRUE, keep all adducts of a feature group as long as one MS/MS spectrum
+#'   fulfills above criteria. If FALSE (the default), keep only that adduct with the most intense MS/MS spectrum.
 #'
 #' @returns an object of the same class as 'x'
 #' @export
@@ -96,26 +96,27 @@ filterAdductGroupsByMS2Quality <- function(x,
                                            min_tic = 1e3,
                                            min_ions = 3,
                                            keep_all_adducts = FALSE) {
-  my_rank <- function(x) 
+  rank1 <- function(x) {
     rank(x, ties.method = "first")
+  }
   stopifnot(inherits(x, "data.frame"))
   stopifnot(all(c(feat_group_column, ms2_column) %in% colnames(x)))
   feat_group <- x[[ feat_group_column ]]
   ms2 <- x[[ ms2_column ]]
   s_ms2 <- prepareSpectra(x[, ms2_column], ms2_column)[[ "s" ]]
-  tic_ms2 <- sapply(s_ms2, function(s) sum(s[,2]))
-  best_ms2 <- stats::ave(-tic_ms2, feat_group, FUN = my_rank) == 1
-  x$best_ms2 <- best_ms2
-  nion_ms2 <- sapply(s_ms2, nrow)
+  tic_ms2 <- sapply(s_ms2, function(s) max(0, sum(s[,2]), na.rm = TRUE))
+  nion_ms2 <- sapply(s_ms2, function(s) sum(is.finite(s[,2]) & s[,2] > 0))
   ms2_ok <- tic_ms2 >= min_tic & nion_ms2 >= min_ions
-  flt <- stats::ave(ms2_ok, feat_group, FUN = any)
-  x <- x[flt, ]
-  if(!keep_all_adducts) {
-    x <- x[x$best_ms2, ]
+  grp_ok <- stats::ave(ms2_ok, feat_group, FUN = any)
+  x_out <- if(keep_all_adducts) {
+    x[grp_ok, ]
+  } else {
+    best_ms2 <- as.logical(stats::ave(-tic_ms2[grp_ok & ms2_ok], 
+                                      feat_group[grp_ok & ms2_ok], 
+                                      FUN = function(x) rank1(x) == 1))
+    x[grp_ok & ms2_ok, ][best_ms2, ]
   }
-  x |> 
-    relocateIntensityColumns() |> 
-    updateIntensityColumnIndex()
+  x_out
 }
 
 

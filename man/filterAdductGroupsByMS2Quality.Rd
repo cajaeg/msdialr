@@ -16,16 +16,16 @@ filterAdductGroupsByMS2Quality(
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{feat_group_column}{name of column (default: "feat_group")}
+\item{feat_group_column}{name of feature group column, default: "feat_group"}
 
-\item{ms2_column}{name of column (default: "ms2")}
+\item{ms2_column}{name of MS/MS spectrum column, default: "ms2"}
 
-\item{min_tic}{minimum summed intensity of MS/MS spectrum}
+\item{min_tic}{minimum summed intensity required for MS/MS spectra to be kept}
 
-\item{min_ions}{minimum number of ions of MS/MS spectrum}
+\item{min_ions}{minimum number of ions required for MS/MS spectra to be kept}
 
-\item{keep_all_adducts}{keep all or only adduct with best MS/MS spectrum
-within each feature group}
+\item{keep_all_adducts}{if TRUE, keep all adducts of a feature group as long as one MS/MS spectrum
+fulfills above criteria. If FALSE (the default), keep only that adduct with the most intense MS/MS spectrum.}
 }
 \value{
 an object of the same class as 'x'
