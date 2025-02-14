@@ -13,7 +13,7 @@ filterAdductGroupsBySize(
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{group_size_column}{name of column (default: "group_size")}
+\item{group_size_column}{name of group size column, default: "group_size"}
 
 \item{min_group_size}{minimum number of adducts}
 }

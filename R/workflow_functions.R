@@ -1,4 +1,4 @@
-#' Find features with the same neutral mass
+#' Find features based on identical neutral mass
 #'
 #' @param x MS-DIAL alignment results table
 #' @param mz_column name of m/z column
@@ -8,11 +8,27 @@
 #' @param delta_rt absolute retention time window (min)
 #' @param verbose display progress messages
 #'
-#' @returns an object of the same class as 'x'
+#' @returns 'x' with additional columns 'feat_group' and 'group_size'
 #' @export
 #' 
 #' @examples
-#' # TBD
+#' fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
+#' aligned <- loadAlignmentResults(fp)
+#' length(unique(aligned$alignment)) # 230
+#' aligned1 <- aligned |> 
+#'   assignAdductGroups()
+#' length(unique(aligned1$feat_group)) # 174
+#' aligned2 <- aligned1 |> 
+#'   filterAdductGroupsBySize(min_group_size = 3)
+#' \dontrun{
+#' library(ggplot2)
+#' ggplot(aligned2, 
+#'        aes(x = average_rt_min, 
+#'            y = average_mz, 
+#'            colour = feat_group)
+#'        ) +
+#'   geom_point() 
+#' }
 assignAdductGroups <- function(x, 
                                mz_column = "average_mz", 
                                adduct_type_column = "adduct_type",
@@ -56,7 +72,7 @@ assignAdductGroups <- function(x,
 #' Remove features with less than n adducts
 #'
 #' @param x MS-DIAL alignment results table
-#' @param group_size_column name of column (default: "group_size")
+#' @param group_size_column name of group size column, default: "group_size"
 #' @param min_group_size minimum number of adducts
 #'
 #' @returns an object of the same class as 'x'
@@ -75,7 +91,7 @@ filterAdductGroupsBySize <- function(x,
 }
 
 
-#' Remove features with bad MS/MS spectra
+#' Remove features without good MS/MS spectra
 #'
 #' @param x MS-DIAL alignment results table
 #' @param feat_group_column name of feature group column, default: "feat_group"

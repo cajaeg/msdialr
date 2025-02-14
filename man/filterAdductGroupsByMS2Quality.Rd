@@ -2,7 +2,7 @@
 % Please edit documentation in R/workflow_functions.R
 \name{filterAdductGroupsByMS2Quality}
 \alias{filterAdductGroupsByMS2Quality}
-\title{Remove features with bad MS/MS spectra}
+\title{Remove features without good MS/MS spectra}
 \usage{
 filterAdductGroupsByMS2Quality(
   x,
@@ -31,7 +31,7 @@ fulfills above criteria. If FALSE (the default), keep only that adduct with the 
 an object of the same class as 'x'
 }
 \description{
-Remove features with bad MS/MS spectra
+Remove features without good MS/MS spectra
 }
 \examples{
 # TBD

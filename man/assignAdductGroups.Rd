@@ -2,7 +2,7 @@
 % Please edit documentation in R/workflow_functions.R
 \name{assignAdductGroups}
 \alias{assignAdductGroups}
-\title{Find features with the same neutral mass}
+\title{Find features based on identical neutral mass}
 \usage{
 assignAdductGroups(
   x,
@@ -30,11 +30,27 @@ assignAdductGroups(
 \item{verbose}{display progress messages}
 }
 \value{
-an object of the same class as 'x'
+'x' with additional columns 'feat_group' and 'group_size'
 }
 \description{
-Find features with the same neutral mass
+Find features based on identical neutral mass
 }
 \examples{
-# TBD
+fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
+aligned <- loadAlignmentResults(fp)
+length(unique(aligned$alignment)) # 230
+aligned1 <- aligned |> 
+  assignAdductGroups()
+length(unique(aligned1$feat_group)) # 174
+aligned2 <- aligned1 |> 
+  filterAdductGroupsBySize(min_group_size = 3)
+\dontrun{
+library(ggplot2)
+ggplot(aligned2, 
+       aes(x = average_rt_min, 
+           y = average_mz, 
+           colour = feat_group)
+       ) +
+  geom_point() 
+}
 }
