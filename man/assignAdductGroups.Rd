@@ -2,6 +2,7 @@
 % Please edit documentation in R/workflow_functions.R
 \name{assignAdductGroups}
 \alias{assignAdductGroups}
+\alias{plotAdductGroups}
 \title{Group features based on identical neutral mass}
 \usage{
 assignAdductGroups(
@@ -12,6 +13,13 @@ assignAdductGroups(
   delta_mz = 0.01,
   delta_rt = 0.1,
   verbose = NULL
+)
+
+plotAdductGroups(
+  x,
+  rt_column = "average_rt_min",
+  mz_column = "average_mz",
+  adduct_column = "adduct_type"
 )
 }
 \arguments{
@@ -34,23 +42,21 @@ assignAdductGroups(
 }
 \description{
 Group features based on identical neutral mass
+
+Plot adduct groups
 }
 \examples{
 fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
 aligned <- loadAlignmentResults(fp)
 length(unique(aligned$alignment)) # 230
+
 aligned1 <- aligned |> 
   assignAdductGroups()
 length(unique(aligned1$feat_group)) # 174
+plotAdductSpace(aligned1)
+
 aligned2 <- aligned1 |> 
-  filterAdductGroupsBySize(min_group_size = 3)
-\dontrun{
-library(ggplot2)
-ggplot(aligned2, 
-       aes(x = average_rt_min, 
-           y = average_mz, 
-           colour = feat_group)
-       ) +
-  geom_point() 
-}
+  filterAdductGroupsBySize(min_group_size = 2)
+length(unique(aligned2$feat_group)) # 36
+plotAdductSpace(aligned2)
 }

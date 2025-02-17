@@ -15,20 +15,16 @@
 #' fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
 #' aligned <- loadAlignmentResults(fp)
 #' length(unique(aligned$alignment)) # 230
+#' 
 #' aligned1 <- aligned |> 
 #'   assignAdductGroups()
 #' length(unique(aligned1$feat_group)) # 174
+#' plotAdductSpace(aligned1)
+#' 
 #' aligned2 <- aligned1 |> 
-#'   filterAdductGroupsBySize(min_group_size = 3)
-#' \dontrun{
-#' library(ggplot2)
-#' ggplot(aligned2, 
-#'        aes(x = average_rt_min, 
-#'            y = average_mz, 
-#'            colour = feat_group)
-#'        ) +
-#'   geom_point() 
-#' }
+#'   filterAdductGroupsBySize(min_group_size = 2)
+#' length(unique(aligned2$feat_group)) # 36
+#' plotAdductSpace(aligned2)
 assignAdductGroups <- function(x, 
                                mz_column = "average_mz", 
                                adduct_column = "adduct_type",
@@ -66,6 +62,35 @@ assignAdductGroups <- function(x,
   x |> 
     relocateIntensityColumns() |> 
     updateIntensityColumnIndex()
+}
+
+
+#' Plot adduct groups
+#' @rdname assignAdductGroups
+#'
+#' @param x MS-DIAL alignment results table
+#' @param rt_column name of retention time column
+#' @param mz_column name of m/z column
+#' @param adduct_column name of adduct column
+#'
+#' @returns NULL
+#' @export
+plotAdductGroups <- function(x, 
+                            rt_column = "average_rt_min",
+                            mz_column = "average_mz",
+                            adduct_column = "adduct_type") {
+  rt <- x[[ rt_column ]]
+  mz <- x[[ mz_column ]]
+  fct <- factor(x[[ adduct_column ]])
+  tmp <- sort(table(fct), decreasing = TRUE)
+  fct <- factor(fct, levels = levels(fct)[match(names(tmp), levels(fct))])
+  bg_col <- match(fct, levels(fct))
+  plot(rt, mz, type = "n", 
+       xlab = "Retention Time (min)", ylab = "m/z")
+  points(rt, mz, 
+         col = NULL, pch = 21, bg = bg_col)
+  legend("topleft", legend = sprintf("%s (%d)", levels(fct), as.numeric(tmp)), 
+         pch = 21, col = NA, pt.bg = seq_along(levels(fct)))
 }
 
 
