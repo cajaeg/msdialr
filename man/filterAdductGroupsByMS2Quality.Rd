@@ -24,15 +24,13 @@ filterAdductGroupsByMS2Quality(
 
 \item{min_ions}{minimum number of ions required for MS/MS spectra to be kept}
 
-\item{keep_all_adducts}{if TRUE, keep all adducts of a feature group as long as one MS/MS spectrum
-fulfills above criteria. If FALSE (the default), keep only that adduct with the most intense MS/MS spectrum.}
+\item{keep_all_adducts}{if TRUE, keep all adducts of a feature group as long
+as one MS/MS spectrum fulfills above criteria. If FALSE (the default), keep
+only the adduct with the most intense MS/MS spectrum.}
 }
 \value{
 an object of the same class as 'x'
 }
 \description{
 Remove features without good MS/MS spectra
-}
-\examples{
-# TBD
 }

@@ -4,25 +4,23 @@
 \alias{removeSparseFeatures}
 \title{Remove features occurring only in few samples}
 \usage{
-removeSparseFeatures(x, sample_groups = NULL, min_int = 1000, min_frac = 0.5)
+removeSparseFeatures(x, sample_group = NULL, min_int = 1000, min_frac = 0.5)
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{sample_groups}{numeric or character vector defining sample grouping;
-NULL to use attr(x, "msdial_sam")$class; "" to apply filter without sample
-grouping (equivalent to rep(1, length(samples)))}
+\item{sample_group}{numeric or character vector defining sample grouping;
+\code{NULL} to use \code{attr(x, "msdial_sam")$class}; "" to apply filter
+without sample grouping (equivalent to \code{rep(1, length(samples))}).}
 
-\item{min_int}{minimum intensity}
+\item{min_int}{minimum intensity that a feature must have}
 
-\item{min_frac}{minimum fraction of samples}
+\item{min_frac}{minimum fraction of samples (within each group if
+sample_group is defined accordingly) that contain the feature at an intensity >= min_int}
 }
 \value{
 an object of the same class as 'x'
 }
 \description{
 Remove features occurring only in few samples
-}
-\examples{
-# TBD
 }

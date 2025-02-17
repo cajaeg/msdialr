@@ -4,20 +4,19 @@
 \alias{subtractBlankLevels}
 \title{Subtract blank levels}
 \usage{
-subtractBlankLevels(x, blank_idx = NULL)
+subtractBlankLevels(x, blank_idx = NULL, fun = c("median", "average")[1])
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{blank_idx}{index of blank samples; NULL to use attr(x,
-"msdial_sam")$file_type == "Blank"}
+\item{blank_idx}{index of blank samples; \code{NULL} to use \code{attr(x,
+"msdial_sam")$file_type == "Blank"}}
+
+\item{fun}{function used to calculate blank levels}
 }
 \value{
 an object of the same class as 'x'
 }
 \description{
 Subtract blank levels
-}
-\examples{
-# TBD
 }

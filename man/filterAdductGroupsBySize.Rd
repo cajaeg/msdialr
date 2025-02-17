@@ -23,6 +23,3 @@ an object of the same class as 'x'
 \description{
 Remove features with less than n adducts
 }
-\examples{
-# TBD
-}

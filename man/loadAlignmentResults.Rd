@@ -2,6 +2,10 @@
 % Please edit documentation in R/MS-DIAL.r
 \name{loadAlignmentResults}
 \alias{loadAlignmentResults}
+\alias{getIntensityColumns}
+\alias{getIntensityMatrix}
+\alias{relocateIntensityColumns}
+\alias{updateIntensityColumnIndex}
 \title{Import MS-DIAL alignment results}
 \usage{
 loadAlignmentResults(
@@ -10,11 +14,17 @@ loadAlignmentResults(
   raw_suffix = "mzml",
   sample_names = NULL
 )
+
+getIntensityColumns(x)
+
+getIntensityMatrix(x)
+
+relocateIntensityColumns(x)
+
+updateIntensityColumnIndex(x, sam = NULL)
 }
 \arguments{
-\item{x}{Alignment results file, e.g. "Height.txt", "Area.txt" or
-"AlignmentResult.msdial", or folder containing these files (in which case
-the last created file is used).}
+\item{x}{MS-DIAL alignment results table}
 
 \item{raw_folder}{Location of raw data. If given, file paths of mzML files
 will be attached to \code{attr(x, "msdial_sam")}. If NULL (the default),
@@ -26,6 +36,8 @@ from 'mzML'. Only relevant when 'raw_folder' is given.}
 
 \item{sample_names}{Optional character vector to use instead of original
 column names. No check for proper order is performed.}
+
+\item{sam}{sample table. If NULL, uses \code{attr(x, "msdial_sam")}}
 }
 \value{
 data.frame with two attributes attached: "msdial_sam" and
@@ -36,6 +48,14 @@ sample class information as defined in MS-DIAL.
 
 \code{attr(x, "intensity_columns")} is an index of columns holding MS
 intensities (sample columns).
+
+numeric()
+
+numeric()
+
+an object of the same class as 'x'
+
+an object of the same class as 'x'
 }
 \description{
 Read "Height.txt" or "Area.txt" files as obtained by running "Export ->

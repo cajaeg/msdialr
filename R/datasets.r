@@ -14,7 +14,6 @@
 #' data(pmass)
 NULL
 
-
 #' Chemical elements
 #'
 #' @format data.frame with columns 'name' and 'mass'

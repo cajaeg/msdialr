@@ -2,16 +2,16 @@
 % Please edit documentation in R/workflow_functions.R
 \name{normalizeIntensities}
 \alias{normalizeIntensities}
-\title{Normalize intensities based on summed or median intensity}
+\title{Divide intensity values by summed or median intensity}
 \usage{
-normalizeIntensities(x, sample_groups = NULL, fun = c("sum", "median")[1])
+normalizeIntensities(x, sample_group = NULL, fun = c("sum", "median")[1])
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{sample_groups}{numeric or character vector defining sample grouping;
-NULL to use attr(x, "msdial_sam")$class; "" to apply filter without sample
-grouping (equivalent to rep(1, length(samples)))}
+\item{sample_group}{numeric or character vector defining sample grouping;
+\code{NULL} to use \code{attr(x, "msdial_sam")$class}; "" to apply filter without sample
+grouping (equivalent to \code{rep(1, length(samples))})}
 
 \item{fun}{summary function to use, i.e. sum or median}
 }
@@ -19,8 +19,9 @@ grouping (equivalent to rep(1, length(samples)))}
 an object of the same class as 'x'
 }
 \description{
-Normalize intensities based on summed or median intensity
-}
-\examples{
-# TBD
+Normalization is performed by (1) calculating each sample's summed or median
+intensity; (2) summarizing these values as group medians; (3) dividing
+sample-wise summary values by group medians; (4) dividing peak intensities by
+these normalized values. This way, normalized intensity remain similar
+in magnitude as the original values.
 }

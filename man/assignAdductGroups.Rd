@@ -2,12 +2,12 @@
 % Please edit documentation in R/workflow_functions.R
 \name{assignAdductGroups}
 \alias{assignAdductGroups}
-\title{Find features based on identical neutral mass}
+\title{Group features based on identical neutral mass}
 \usage{
 assignAdductGroups(
   x,
   mz_column = "average_mz",
-  adduct_type_column = "adduct_type",
+  adduct_column = "adduct_type",
   rt_column = "average_rt_min",
   delta_mz = 0.01,
   delta_rt = 0.1,
@@ -19,7 +19,7 @@ assignAdductGroups(
 
 \item{mz_column}{name of m/z column}
 
-\item{adduct_type_column}{name of adduct column}
+\item{adduct_column}{name of adduct column}
 
 \item{rt_column}{name of retention time column}
 
@@ -33,7 +33,7 @@ assignAdductGroups(
 'x' with additional columns 'feat_group' and 'group_size'
 }
 \description{
-Find features based on identical neutral mass
+Group features based on identical neutral mass
 }
 \examples{
 fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
