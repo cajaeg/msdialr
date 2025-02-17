@@ -46,9 +46,9 @@ assignAdductGroups <- function(x,
   mz_digits <- 3
   rt_digits <- 2
   stopifnot(inherits(x, "data.frame"))
-  stopifnot(all(c(mz_column, adduct_type_column, rt_column) %in% colnames(x)))
+  stopifnot(all(c(mz_column, adduct_column, rt_column) %in% colnames(x)))
   mz <- x[[ mz_column ]]
-  adduct_type <- x[[ adduct_type_column ]]
+  adduct_type <- x[[ adduct_column ]]
   rt <- x[[ rt_column ]]
   msg("Calculating neutral masses ...", verbose)
   nm <- mz2nm(mz, adduct_type)
