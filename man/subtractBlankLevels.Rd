@@ -4,7 +4,11 @@
 \alias{subtractBlankLevels}
 \title{Subtract blank levels}
 \usage{
-subtractBlankLevels(x, blank_idx = NULL, fun = c("median", "average")[1])
+subtractBlankLevels(
+  x,
+  blank_idx = NULL,
+  fun = c("max", "median", "average")[1]
+)
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
@@ -12,11 +16,13 @@ subtractBlankLevels(x, blank_idx = NULL, fun = c("median", "average")[1])
 \item{blank_idx}{index of blank samples; \code{NULL} to use \code{attr(x,
 "msdial_sam")$file_type == "Blank"}}
 
-\item{fun}{function used to calculate blank levels}
+\item{fun}{function to use for blank level calculation, default: "max"}
 }
 \value{
 an object of the same class as 'x'
 }
 \description{
-Subtract blank levels
+Summarize blank levels from individual blank samples using function 'fun' and
+subtract summarized values from sample intensities. Possible negative values
+resulting from subtraction are replaced by zero.
 }

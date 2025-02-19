@@ -13,10 +13,10 @@ removeSparseFeatures(x, sample_group = NULL, min_int = 1000, min_frac = 0.5)
 \code{NULL} to use \code{attr(x, "msdial_sam")$class}; "" to apply filter
 without sample grouping (equivalent to \code{rep(1, length(samples))}).}
 
-\item{min_int}{minimum intensity that a feature must have}
+\item{min_int}{minimum intensity that a feature must have, default: 1e3}
 
-\item{min_frac}{minimum fraction of samples (within each group if
-sample_group is defined accordingly) that contain the feature at an intensity >= min_int}
+\item{min_frac}{minimum fraction of samples (of at least one group if
+sample_group is defined accordingly) that contain the feature at an intensity >= min_int, default: 0.5}
 }
 \value{
 an object of the same class as 'x'

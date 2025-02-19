@@ -1,15 +1,18 @@
 #' Subtract blank levels
 #'
+#' Summarize blank levels from individual blank samples using function 'fun' and
+#' subtract summarized values from sample intensities. Possible negative values
+#' resulting from subtraction are replaced by zero.
 #' @param x MS-DIAL alignment results table
 #' @param blank_idx index of blank samples; \code{NULL} to use \code{attr(x,
 #'   "msdial_sam")$file_type == "Blank"}
-#' @param fun function used to calculate blank levels
+#' @param fun function to use for blank level calculation, default: "max"
 #'
 #' @returns an object of the same class as 'x'
 #' @export
 subtractBlankLevels <- function(x, 
                                 blank_idx = NULL, 
-                                fun = c("median", "average")[1]) {
+                                fun = c("max", "median", "average")[1]) {
   if (is.null(blank_idx)) {
     blank_idx <- attr(x, "msdial_sam")$file_type == "Blank"
   }
@@ -31,9 +34,9 @@ subtractBlankLevels <- function(x,
 #' @param sample_group numeric or character vector defining sample grouping;
 #'   \code{NULL} to use \code{attr(x, "msdial_sam")$class}; "" to apply filter
 #'   without sample grouping (equivalent to \code{rep(1, length(samples))}).
-#' @param min_int minimum intensity that a feature must have
-#' @param min_frac minimum fraction of samples (within each group if
-#'   sample_group is defined accordingly) that contain the feature at an intensity >= min_int
+#' @param min_int minimum intensity that a feature must have, default: 1e3
+#' @param min_frac minimum fraction of samples (of at least one group if
+#'   sample_group is defined accordingly) that contain the feature at an intensity >= min_int, default: 0.5
 #'
 #' @returns an object of the same class as 'x'
 #' @export
@@ -48,7 +51,7 @@ removeSparseFeatures <- function(x,
     sample_group <- rep(1, length(getIntensityColumns(x)))
   int_mat <- getIntensityMatrix(x)
   flt <- apply(int_mat, 1, tapply, sample_group, function(x)
-    sum(x > min_int) / length(x) > min_frac
+    sum(x >= min_int) / length(x) >= min_frac
   )
   if(!is.null(dim(flt))) 
     flt <- apply(flt, 2, any)
