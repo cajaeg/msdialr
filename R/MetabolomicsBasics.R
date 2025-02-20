@@ -18,7 +18,7 @@ removeFactorsByANOVA <- function(x,
         sam[[ col_name ]] <- as.integer(sam[[ col_name ]])
     }
   }
-  int_mat <- t(data.matrix(getIntensityMatrix(x)))
+  int_mat <- t(getIntensityMatrix(x, as.matrix = TRUE))
   int_mat_new <- 
     10^MetabolomicsBasics::RemoveFactorsByANOVA(
       log10(int_mat + 1),

@@ -17,7 +17,7 @@ loadAlignmentResults(
 
 getIntensityColumns(x)
 
-getIntensityMatrix(x)
+getIntensityMatrix(x, as.matrix = TRUE)
 
 relocateIntensityColumns(x)
 
@@ -37,6 +37,8 @@ from 'mzML'. Only relevant when 'raw_folder' is given.}
 \item{sample_names}{Optional character vector to use instead of original
 column names. No check for proper order is performed.}
 
+\item{as.matrix}{ensure that return value is numeric matrix}
+
 \item{sam}{sample table. If NULL, uses \code{attr(x, "msdial_sam")}}
 }
 \value{
@@ -51,7 +53,8 @@ intensities (sample columns).
 
 numeric()
 
-numeric()
+an object of the same class as 'x', or numeric matrix when
+\code{as.matrix == TRUE}
 
 an object of the same class as 'x'
 

@@ -24,13 +24,13 @@ exportToMetaboAnalyst <- function(x,
   if(metabolite_names %in% colnames(x))
     metabolite_names <- x[[ metabolite_names ]]
   else 
-    metabolite_names <- formatNumericIDs(1:nrow(getIntensityMatrix(x)),
+    metabolite_names <- formatNumericIDs(1:nrow(getIntensityMatrix(x, as.matrix = TRUE)),
                                          prefix = "Metabolite_")
   if(any(duplicated(metabolite_names)))
     metabolite_names <- make.unique(metabolite_names, "_")
   out <- data.frame(Sample = Sample,
                     Class = Class,
-                    t(data.matrix(getIntensityMatrix(x))))
+                    t(getIntensityMatrix(x, as.matrix = TRUE)))
   colnames(out)[3:ncol(out)] <- metabolite_names
   if(file != "") {
     message(
@@ -40,4 +40,3 @@ exportToMetaboAnalyst <- function(x,
   }
   utils::write.csv(out, file = file)
 }
-

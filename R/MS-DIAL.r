@@ -173,15 +173,24 @@ getIntensityColumns <- function(x) {
 }
 
 
-#' Get intensity matrix portion of MS-DIAL alignment file
+#' Get peak intensity part of MS-DIAL alignment file
 #' @rdname loadAlignmentResults
 #'
 #' @param x MS-DIAL alignment file
+#' @param as.matrix ensure that return value is numeric matrix
 #'
-#' @return numeric()
+#' @return an object of the same class as 'x', or numeric matrix when
+#'   \code{as.matrix == TRUE}
 #' @export
-getIntensityMatrix <- function(x) {
-  x[, getIntensityColumns(x)]
+getIntensityMatrix <- function(x, as.matrix = TRUE) {
+  cidx <- getIntensityColumns(x)
+  if(as.matrix) {
+    out <- data.matrix(x[, cidx])
+    rownames(out) <- make.unique(x$alignment_id)
+    out
+  } else {
+    x[, cidx]
+  }
 }
 
 

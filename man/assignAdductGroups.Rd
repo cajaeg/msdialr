@@ -3,6 +3,8 @@
 \name{assignAdductGroups}
 \alias{assignAdductGroups}
 \alias{plotAdductGroups}
+\alias{filterAdductGroupsBySize}
+\alias{filterAdductGroupsByMS2Quality}
 \title{Group features based on identical neutral mass}
 \usage{
 assignAdductGroups(
@@ -10,6 +12,8 @@ assignAdductGroups(
   mz_column = "average_mz",
   adduct_column = "adduct_type",
   rt_column = "average_rt_min",
+  feat_group_column = "feat_group",
+  group_size_column = "group_size",
   delta_mz = 0.01,
   delta_rt = 0.1,
   verbose = NULL
@@ -21,6 +25,24 @@ plotAdductGroups(
   mz_column = "average_mz",
   adduct_column = "adduct_type"
 )
+
+filterAdductGroupsBySize(
+  x,
+  feat_group_column = "feat_group",
+  group_size_column = "group_size",
+  min_group_size = 3,
+  verbose = NULL
+)
+
+filterAdductGroupsByMS2Quality(
+  x,
+  feat_group_column = "feat_group",
+  ms2_column = "ms2",
+  min_tic = 1000,
+  min_ions = 3,
+  keep_all_adducts = FALSE,
+  verbose = NULL
+)
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
@@ -31,19 +53,43 @@ plotAdductGroups(
 
 \item{rt_column}{name of retention time column}
 
-\item{delta_mz}{absolute mass window (Da)}
+\item{feat_group_column}{name of feature group column, default: "feat_group"}
 
-\item{delta_rt}{absolute retention time window (min)}
+\item{group_size_column}{name of group size column, default: "group_size"}
 
-\item{verbose}{display progress messages}
+\item{delta_mz}{allowed m/z deviation (Da)}
+
+\item{delta_rt}{allowed retention time deviation (min)}
+
+\item{verbose}{display messages}
+
+\item{min_group_size}{minimum number of adducts}
+
+\item{ms2_column}{name of MS/MS spectrum column, default: "ms2"}
+
+\item{min_tic}{minimum summed intensity required for MS/MS spectra to be kept}
+
+\item{min_ions}{minimum number of ions required for MS/MS spectra to be kept}
+
+\item{keep_all_adducts}{if TRUE, keep all adducts of a feature group as long
+as one MS/MS spectrum fulfills above criteria. If FALSE (the default), keep
+only the adduct with the most intense MS/MS spectrum.}
 }
 \value{
-'x' with additional columns 'feat_group' and 'group_size'
+'x' with additional columns 'feat_group_column' and 'group_size_column'
+
+an object of the same class as 'x'
+
+an object of the same class as 'x'
 }
 \description{
 Group features based on identical neutral mass
 
 Plot adduct groups
+
+Remove features with less than n adducts
+
+Remove features without good MS/MS spectra
 }
 \examples{
 fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
@@ -51,12 +97,12 @@ aligned <- loadAlignmentResults(fp)
 length(unique(aligned$alignment)) # 230
 
 aligned1 <- aligned |> 
-  assignAdductGroups()
+  assignAdductGroups(verbose = TRUE)
 length(unique(aligned1$feat_group)) # 174
-plotAdductSpace(aligned1)
+plotAdductGroups(aligned1)
 
 aligned2 <- aligned1 |> 
   filterAdductGroupsBySize(min_group_size = 2)
 length(unique(aligned2$feat_group)) # 36
-plotAdductSpace(aligned2)
+plotAdductGroups(aligned2)
 }
