@@ -4,7 +4,7 @@
 #' @param in_column name of column containing InChIKey's. Can be "NISTres" in
 #'   which case query is performed on a previous NIST search result.
 #'
-#' @return 'x' completed with the following columns:
+#' @return 'x' with two additional columns:
 #' \itemize{
 #' \item 'xlogp' XLogP value (see \code{rcdk::get.xlogp()})
 #' \item 'alogp' ALogP value (see \code{rcdk::get.alogp()})
@@ -46,7 +46,9 @@ addLogP <- function(x, in_column = c("smiles", "NISTres")[1]) {
       dplyr::left_join(res, by = "smiles", suffix = c("", "$$")) |>
       dplyr::select(-tidyselect::ends_with("$$"))
   }
-  return(out)
+  out |>
+    relocateIntensityColumns() |>
+    updateIntensityColumnIndex()
 }
 
 

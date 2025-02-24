@@ -500,5 +500,7 @@ prepareSpectra <- function(x,
     return(x)
   })
   x[[ out_column ]] <- s_df
-  return(x)
+  x|>
+    relocateIntensityColumns() |>
+    updateIntensityColumnIndex()
 }

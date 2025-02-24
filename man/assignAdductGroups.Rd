@@ -94,9 +94,9 @@ Group co-eluting adduct peaks
 
 Plot adduct groups
 
-Flag/filter peak groups based on number of distinct adducts
+Flag/remove peak groups based on number of distinct adducts
 
-Rank/filter adduct peaks based on MS/MS intensity
+Rank/remove adduct peaks based on MS/MS intensity
 }
 \examples{
 fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")

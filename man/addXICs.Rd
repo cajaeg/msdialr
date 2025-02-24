@@ -16,8 +16,8 @@ addXICs(
   smooth = 0,
   max_mz = 5,
   EIC = FALSE,
-  .progress = FALSE,
-  .pivot_longer = FALSE
+  verbose = NULL,
+  pivot_longer = FALSE
 )
 }
 \arguments{
@@ -48,9 +48,10 @@ spectra or single m/z values}
 
 \item{EIC}{if 'TRUE' add (sum-based) EICs instead of (maximum-based) BPCs}
 
-\item{.progress}{display a progress bar}
+\item{verbose}{display a progress bar, defaults to the output of
+\code{interactive()}}
 
-\item{.pivot_longer}{transform resulting BPC matrices to long format. Useful
+\item{pivot_longer}{transform resulting BPC matrices to long format. Useful
 for plotting with 'ggplot'.}
 }
 \value{

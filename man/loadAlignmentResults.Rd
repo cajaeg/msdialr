@@ -3,7 +3,10 @@
 \name{loadAlignmentResults}
 \alias{loadAlignmentResults}
 \alias{getIntensityColumns}
+\alias{setIntensityColumns}
 \alias{getIntensityMatrix}
+\alias{getSampleList}
+\alias{setSampleList}
 \alias{relocateIntensityColumns}
 \alias{updateIntensityColumnIndex}
 \title{Import MS-DIAL alignment results}
@@ -12,12 +15,19 @@ loadAlignmentResults(
   x,
   raw_folder = NULL,
   raw_suffix = "mzml",
-  sample_names = NULL
+  sample_names = NULL,
+  prefix = NULL
 )
 
 getIntensityColumns(x)
 
+setIntensityColumns(x, intensity_columns = NULL)
+
 getIntensityMatrix(x, as.matrix = TRUE)
+
+getSampleList(x)
+
+setSampleList(x, sam = NULL)
 
 relocateIntensityColumns(x)
 
@@ -28,22 +38,27 @@ updateIntensityColumnIndex(x, sam = NULL)
 
 \item{raw_folder}{Location of raw data. If given, file paths of mzML files
 will be attached to \code{attr(x, "msdial_sam")}. If NULL (the default),
-\code{dirname(txt)} will be checked for raw data. Pass "" to prevent any
+\code{dirname(txt)} will be checked for raw data. Pass "" to disable any
 search for raw data.}
 
 \item{raw_suffix}{File type of raw data. Adjust this when file type differs
-from 'mzML'. Only relevant when 'raw_folder' is given.}
+from 'mzML'. Only relevant when 'raw_folder' is given. Search pattern is
+case-insensitive.}
 
 \item{sample_names}{Optional character vector to use instead of original
 column names. No check for proper order is performed.}
+
+\item{prefix}{Prefix added to alignment_id, e.g. "hilic_pos_". If NULL (the
+default), alignment_id's are kept unchanged.}
+
+\item{intensity_columns}{numeric() or NULL}
 
 \item{as.matrix}{ensure that return value is numeric matrix}
 
 \item{sam}{sample table. If NULL, uses \code{attr(x, "msdial_sam")}}
 }
 \value{
-data.frame with two attributes attached: "msdial_sam" and
-"intensity_columns".
+data.frame with attributes "msdial_sam" and "intensity_columns".
 
 \code{attr(x, "msdial_sam")} is derived from the file header and contains
 sample class information as defined in MS-DIAL.
@@ -53,8 +68,14 @@ intensities (sample columns).
 
 numeric()
 
+'x' with attribute 'intensity_columns'
+
 an object of the same class as 'x', or numeric matrix when
 \code{as.matrix == TRUE}
+
+data.frame
+
+'x' with new or updated attribute 'msdial_sam'
 
 an object of the same class as 'x'
 

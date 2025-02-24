@@ -13,7 +13,7 @@ addLogP(x, in_column = c("smiles", "NISTres")[1])
 which case query is performed on a previous NIST search result.}
 }
 \value{
-'x' completed with the following columns:
+'x' with two additional columns:
 \itemize{
 \item 'xlogp' XLogP value (see \code{rcdk::get.xlogp()})
 \item 'alogp' ALogP value (see \code{rcdk::get.alogp()})

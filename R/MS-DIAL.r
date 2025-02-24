@@ -8,15 +8,17 @@
 #'   the last created file is used).
 #' @param raw_folder Location of raw data. If given, file paths of mzML files
 #'   will be attached to \code{attr(x, "msdial_sam")}. If NULL (the default),
-#'   \code{dirname(txt)} will be checked for raw data. Pass "" to prevent any
+#'   \code{dirname(txt)} will be checked for raw data. Pass "" to disable any
 #'   search for raw data.
 #' @param raw_suffix File type of raw data. Adjust this when file type differs
-#'   from 'mzML'. Only relevant when 'raw_folder' is given.
+#'   from 'mzML'. Only relevant when 'raw_folder' is given. Search pattern is
+#'   case-insensitive.
 #' @param sample_names Optional character vector to use instead of original
 #'   column names. No check for proper order is performed.
+#' @param prefix Prefix added to alignment_id, e.g. "hilic_pos_". If NULL (the
+#'   default), alignment_id's are kept unchanged.
 #'
-#' @return data.frame with two attributes attached: "msdial_sam" and
-#'   "intensity_columns".
+#' @return data.frame with attributes "msdial_sam" and "intensity_columns".
 #'
 #'   \code{attr(x, "msdial_sam")} is derived from the file header and contains
 #'   sample class information as defined in MS-DIAL.
@@ -30,14 +32,16 @@
 #' height_file <- file.path(fp, "MSDIAL_Alignment_result_GCQTOF.txt")
 #' msd <- loadAlignmentResults(height_file)
 #' head(msd)
-#' 
+#'
 #' int_mat <- getIntensityMatrix(msd)
 #' hist(apply(int_mat, 1, median))
 loadAlignmentResults <-
   function(x,
            raw_folder = NULL,
            raw_suffix = "mzml",
-           sample_names = NULL) {
+           sample_names = NULL,
+           prefix = NULL
+           ) {
     stopifnot(file.exists(x))
     if (file.info(x)$isdir) {
       fp <- x
@@ -149,6 +153,10 @@ loadAlignmentResults <-
     } else {
       msdial_sam$raw_file <- NA_character_
     }
+    if (!is.null(prefix)) {
+      out$alignment_id <- 
+        formatNumericIDs(out$alignment_id, prefix = prefix)
+    } 
     attr(out, "msdial_sam") <- msdial_sam
     attr(out, "intensity_columns") <- intensity_columns
     message(sprintf(
@@ -173,6 +181,21 @@ getIntensityColumns <- function(x) {
 }
 
 
+#' Set index of intensity columns
+#' @rdname loadAlignmentResults
+#' 
+#' @param x MS-DIAL alignment file
+#' @param intensity_columns numeric() or NULL
+#'
+#' @return 'x' with attribute 'intensity_columns'
+#' @export
+setIntensityColumns <- function(x, intensity_columns = NULL) {
+  stopifnot(is.numeric(intensity_columns) || is.null(intensity_columns))
+  attr(x, "intensity_columns") <- intensity_columns
+  x
+}
+
+
 #' Get peak intensity part of MS-DIAL alignment file
 #' @rdname loadAlignmentResults
 #'
@@ -194,6 +217,33 @@ getIntensityMatrix <- function(x, as.matrix = TRUE) {
 }
 
 
+#' Get sample list
+#' @rdname loadAlignmentResults
+#'
+#' @param x MS-DIAL alignment file
+#'
+#' @returns data.frame
+#' @export
+getSampleList <- function(x) {
+  attr(x, "msdial_sam")
+}
+
+
+#' Set sample list
+#' @rdname loadAlignmentResults
+#'
+#' @param x MS-DIAL alignment file
+#' @param sam data.frame or similar, or NULL
+#'
+#' @returns 'x' with new or updated attribute 'msdial_sam'
+#' @export
+setSampleList <- function(x, sam = NULL) {
+  stopifnot(inherits(sam, "data.frame") || is.null(sam))
+  attr(x, "msdial_sam") <- sam
+  x
+}
+
+
 #' Move intensity columns to right edge of data frame
 #' @rdname loadAlignmentResults
 #'
@@ -202,11 +252,14 @@ getIntensityMatrix <- function(x, as.matrix = TRUE) {
 #' @returns an object of the same class as 'x'
 #' @export
 relocateIntensityColumns <- function(x) {
-  attr_intensity_columns <- "intensity_columns"
-  col_idx_old <- attr(x, attr_intensity_columns)
-  is_intensity_column <- (1:ncol(x)) %in% col_idx_old
-  col_idx_new <- c(which(!is_intensity_column), which(is_intensity_column))
-  x[, col_idx_new]
+  col_idx_old <- getIntensityColumns(x)
+  if(!is.null(col_idx_old)) {
+    is_intensity_column <- (1:ncol(x)) %in% col_idx_old
+    col_idx_new <- c(which(!is_intensity_column), which(is_intensity_column))
+    x[, col_idx_new]
+  } else {
+    x
+  }
 }
 
 
@@ -219,16 +272,20 @@ relocateIntensityColumns <- function(x) {
 #' @returns an object of the same class as 'x'
 #' @export
 updateIntensityColumnIndex <- function(x, sam = NULL) {
-  attr_msdial_sam <- "msdial_sam"
-  attr_intensity_columns <- "intensity_columns"
   sam_sample_name_column <- "name"
-  if(is.null(sam))
-    sam <- attr(x, attr_msdial_sam)
-  col_idx <- match(sam[[ sam_sample_name_column ]], colnames(x))
-  if(any(!is.finite(col_idx)))
-    warning("'sam' not synchronized with column names")
-  attr(x, attr_intensity_columns) <- col_idx
-  x
+  attr_intensity_columns <- "intensity_columns"
+  if(is.null(sam)) {
+    sam <- getSampleList(x)
+  }
+  if(!is.null(sam)) {
+    col_idx <- match(sam[[ sam_sample_name_column ]], colnames(x))
+    if(any(!is.finite(col_idx)))
+      warning("'sam' not synchronized with column names")
+    attr(x, attr_intensity_columns) <- col_idx
+    x
+  } else {
+    x
+  }
 }
 
 

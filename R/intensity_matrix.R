@@ -20,12 +20,12 @@ subtractBlankLevels <- function(x,
   }
   int_mat <- getIntensityMatrix(x, as.matrix = TRUE)
   int_blank <- pmax(0, apply(int_mat[, blank_idx], 1, fun, ...))
-  int_mat_new <- matrix(
+  int_mat_mod <- matrix(
     pmax(0, int_mat - int_blank, na.rm = TRUE),
     nrow = nrow(int_mat),
     ncol = ncol(int_mat)
   )
-  x[, getIntensityColumns(x)] <- int_mat_new
+  x[, getIntensityColumns(x)] <- int_mat_mod
   x
 }
 
@@ -76,7 +76,7 @@ filterSparseFeatures <- function(x,
   } else {
     x
   }
-  msg(sprintf("Found %d of %d peaks passing filter", 
+  msg(sprintf("Found %d of %d peaks passing sparse feature filter", 
               sum(flag), 
               nrow(x)),
       verbose)
@@ -114,8 +114,27 @@ normalizeIntensities <- function(x,
   stat <- apply(int_mat, 2, fun, ...)
   stat_med <- stats::ave(stat, sample_group, FUN = stats::median)
   stat <- stat / stat_med
-  int_mat_new <- matrix(pmax(0, t(t(int_mat) / stat), na.rm = TRUE),
+  int_mat_mod <- matrix(pmax(0, t(t(int_mat) / stat), na.rm = TRUE),
                         nrow = nrow(int_mat), ncol = ncol(int_mat))
-  x[, getIntensityColumns(x)] <- int_mat_new
+  x[, getIntensityColumns(x)] <- int_mat_mod
   x
+}
+
+
+#' Filter feature tables according to applied flag/rank functions
+#'
+#' @param x MS-DIAL alignment results table
+#' @param preset preset to use
+#'
+#' @returns filtered alignment table
+#' @noRd
+#' @export
+quickFilter <- function(x, preset = 1) {
+  flt <- switch(
+    preset, 
+    "1" = with(x, passes_groupsize_filter &
+                 is.finite(rank_MS2) & rank_MS2 == 1 &
+                 passes_sparse_filter)
+  )
+  x[flt,]
 }

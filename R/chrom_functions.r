@@ -342,15 +342,16 @@ scaleChrom <- function(chrom,
 #' @param max_mz restrict BPC extraction to the 'max_mz' highest peaks (if
 #'   'in_column' contains spectra)
 #' @param EIC if 'TRUE' add (sum-based) EICs instead of (maximum-based) BPCs
-#' @param .progress display a progress bar
-#' @param .pivot_longer transform resulting BPC matrices to long format. Useful
+#' @param verbose display a progress bar, defaults to the output of
+#'   \code{interactive()}
+#' @param pivot_longer transform resulting BPC matrices to long format. Useful
 #'   for plotting with 'ggplot'.
 #' @return data.frame
 #' @export
 #'
 #' @examples
 #' # see ?loadAlignmentResults
-#'
+#' 
 addXICs <- function(x,
                     in_column = "s",
                     rt_column = c("average_rt_min", "rt_min", "rt"),
@@ -362,10 +363,12 @@ addXICs <- function(x,
                     smooth = 0,
                     max_mz = 5,
                     EIC = FALSE,
-                    .progress = FALSE,
-                    .pivot_longer = FALSE) {
+                    verbose = NULL,
+                    pivot_longer = FALSE) {
   stopifnot(in_column %in% colnames(x))
   stopifnot(any(rt_column %in% colnames(x)))
+  if (is.null(verbose))
+    verbose <- interactive()
   if (is.null(xraw))
     xraw <- attr(x, "raw_data")
   stopifnot(!is.null(xraw))
@@ -381,14 +384,14 @@ addXICs <- function(x,
   rt_column <- rt_column[which(rt_column %in% colnames(x))[1]]
   rt <- x[[rt_column]]
   out <- vector("list", nrow(x))
-  if (.progress) {
+  if (verbose) {
     pb <- utils::txtProgressBar(min = 0,
                                 max = length(out),
                                 style = 3)
     on.exit(close(pb))
   }
   for (i in 1:length(out)) {
-    if (.progress) {
+    if (verbose) {
       utils::setTxtProgressBar(pb, i)
     }
     tmp <- vector("list", length(xraw))
@@ -406,7 +409,7 @@ addXICs <- function(x,
       )
     }
     names(tmp)[flt] <- sub("\\.mzML$", "", basename(sapply(xraw[flt], methods::slot, "filepath")))
-    out[[i]] <- if (.pivot_longer) {
+    out[[i]] <- if (pivot_longer) {
       plyr::ldply(tmp, function(x)
         data.frame(rt = attr(x, "rt"), x, check.names = F), .id = "fromFile") |>
         tidyr::pivot_longer(
@@ -418,6 +421,8 @@ addXICs <- function(x,
     } else
       tmp
   }
-  x[[ out_column ]] <- out
-  return(x)
+  x[[out_column]] <- out
+  x |>
+    relocateIntensityColumns() |>
+    updateIntensityColumnIndex()
 }

@@ -107,7 +107,7 @@ plotAdductGroups <- function(x,
 }
 
 
-#' Flag/filter peak groups based on number of distinct adducts
+#' Flag/remove peak groups based on number of distinct adducts
 #' @rdname assignAdductGroups
 #'
 #' @param x MS-DIAL alignment results table
@@ -148,7 +148,7 @@ filterAdductGroupsBySize <- function(x,
     x
   msg(
     sprintf(
-      "Found %d of %d adduct groups passing filter",
+      "Found %d of %d adduct groups passing group size filter",
       length_unique(x_adduct_group[flt]),
       length_unique(x_adduct_group)
     ),
@@ -160,7 +160,7 @@ filterAdductGroupsBySize <- function(x,
 }
 
 
-#' Rank/filter adduct peaks based on MS/MS intensity
+#' Rank/remove adduct peaks based on MS/MS intensity
 #' @rdname assignAdductGroups
 #'
 #' @param x MS-DIAL alignment results table
@@ -198,8 +198,9 @@ filterAdductGroupsByMS2 <- function(x,
   stopifnot(inherits(x, "data.frame"))
   stopifnot(all(c(group_column, ms2_column) %in% colnames(x)))
   x_adduct_group <- x[[group_column]]
-  x_ms2 <- x[[ms2_column]]
-  s_ms2 <- prepareSpectra(x[, ms2_column], ms2_column)[["s"]]
+  x_ms2 <- x[, ms2_column] |> 
+    setSampleList(NULL) # avoid warning in 'prepareSpectra()'
+  s_ms2 <- prepareSpectra(x_ms2, ms2_column)[["s"]]
   tic_ms2 <- sapply(s_ms2, function(s)
     max(0, sum(s[, 2]), na.rm = TRUE))
   nion_ms2 <- sapply(s_ms2, function(s)
@@ -207,7 +208,7 @@ filterAdductGroupsByMS2 <- function(x,
   ms2_ok <- tic_ms2 >= min_tic & nion_ms2 >= min_ions
   ms2_rnk <- rep(NA_integer_, nrow(x))
   ms2_rnk[ms2_ok] <- as.integer(stats::ave(-tic_ms2[ms2_ok], x_adduct_group[ms2_ok], FUN = rank1))
-  x[[rank_column]] <- ms2_rnk
+  x[[ rank_column ]] <- ms2_rnk
   x_out <- if (filter) {
     x[is.finite(ms2_rnk) & ms2_rnk == 1, ]
   } else {
@@ -216,7 +217,7 @@ filterAdductGroupsByMS2 <- function(x,
   n_ok <- length(unique(x_adduct_group[is.finite(ms2_rnk) &
                                          ms2_rnk == 1]))
   msg(sprintf(
-    "Found %d of %d adduct groups passing filter",
+    "Found %d of %d adduct groups passing MS2 filter",
     n_ok,
     length(unique(x_adduct_group))
   ),

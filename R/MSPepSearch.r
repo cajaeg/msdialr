@@ -299,7 +299,9 @@ searchNIST <- function(x,
   tmp <- mspepsearch(spec = spectra, ri_obs = ri_obs, ...)
   tmp$query <- factor(tmp$query, levels = 1:length(spectra))
   x[[ out_column ]] <- split(tmp, tmp$query)
-  return(x)
+  x |> 
+    relocateIntensityColumns() |>
+    updateIntensityColumnIndex()
 }
 
 
@@ -342,7 +344,9 @@ acceptNISTres <- function(x,
       message("no NIST results found - returning input unchanged")
       x
     }
-  return(out)
+  out |>
+    relocateIntensityColumns() |>
+    updateIntensityColumnIndex()
 }
 
 
