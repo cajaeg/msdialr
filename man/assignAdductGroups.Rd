@@ -4,16 +4,15 @@
 \alias{assignAdductGroups}
 \alias{plotAdductGroups}
 \alias{filterAdductGroupsBySize}
-\alias{filterAdductGroupsByMS2Quality}
-\title{Group features based on identical neutral mass}
+\alias{filterAdductGroupsByMS2}
+\title{Group co-eluting adduct peaks}
 \usage{
 assignAdductGroups(
   x,
   mz_column = "average_mz",
   adduct_column = "adduct_type",
   rt_column = "average_rt_min",
-  feat_group_column = "feat_group",
-  group_size_column = "group_size",
+  group_column = "adduct_group",
   delta_mz = 0.01,
   delta_rt = 0.1,
   verbose = NULL
@@ -21,49 +20,55 @@ assignAdductGroups(
 
 plotAdductGroups(
   x,
-  rt_column = "average_rt_min",
   mz_column = "average_mz",
+  rt_column = "average_rt_min",
   adduct_column = "adduct_type"
 )
 
 filterAdductGroupsBySize(
   x,
-  feat_group_column = "feat_group",
-  group_size_column = "group_size",
+  group_column = "adduct_group",
+  adduct_column = "adduct_type",
   min_group_size = 3,
+  flag_column = "passes_groupsize_filter",
+  filter = FALSE,
   verbose = NULL
 )
 
-filterAdductGroupsByMS2Quality(
+filterAdductGroupsByMS2(
   x,
-  feat_group_column = "feat_group",
+  group_column = "adduct_group",
   ms2_column = "ms2",
   min_tic = 1000,
   min_ions = 3,
-  keep_all_adducts = FALSE,
+  rank_column = "rank_MS2",
+  filter = FALSE,
   verbose = NULL
 )
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{mz_column}{name of m/z column}
+\item{mz_column}{name of m/z column, default "average_mz"}
 
-\item{adduct_column}{name of adduct column}
+\item{adduct_column}{name of adduct column, default: "adduct_type"}
 
-\item{rt_column}{name of retention time column}
+\item{rt_column}{name of retention time column, default "average_rt_min"}
 
-\item{feat_group_column}{name of feature group column, default: "feat_group"}
-
-\item{group_size_column}{name of group size column, default: "group_size"}
+\item{group_column}{name of feature group column, default: "adduct_group"}
 
 \item{delta_mz}{allowed m/z deviation (Da)}
 
 \item{delta_rt}{allowed retention time deviation (min)}
 
-\item{verbose}{display messages}
+\item{verbose}{display messages, defaults to the output of
+\code{interactive()}}
 
-\item{min_group_size}{minimum number of adducts}
+\item{min_group_size}{minimum number of distinct adducts}
+
+\item{flag_column}{name of column to use for flag, default: "passes_groupsize_filter"}
+
+\item{filter}{filter results according to rank, default: FALSE}
 
 \item{ms2_column}{name of MS/MS spectrum column, default: "ms2"}
 
@@ -71,38 +76,40 @@ filterAdductGroupsByMS2Quality(
 
 \item{min_ions}{minimum number of ions required for MS/MS spectra to be kept}
 
-\item{keep_all_adducts}{if TRUE, keep all adducts of a feature group as long
-as one MS/MS spectrum fulfills above criteria. If FALSE (the default), keep
-only the adduct with the most intense MS/MS spectrum.}
+\item{rank_column}{name of column to use for rank, default: "rank_MS2".
+Spectra not passing above criteria are assigned \code{NA}, so filtering for
+\code{is.finite(rank_MS2) & rank_MS2 == 1} yields a clean table for
+further processing.}
 }
 \value{
-'x' with additional columns 'feat_group_column' and 'group_size_column'
+an object identical to 'x', with additional column 'group_column'
 
-an object of the same class as 'x'
+an object of the same class as 'x', with additional column 'flag_column'
 
-an object of the same class as 'x'
+an object of the same class as 'x', with additional column
+'rank_column'
 }
 \description{
-Group features based on identical neutral mass
+Group co-eluting adduct peaks
 
 Plot adduct groups
 
-Remove features with less than n adducts
+Flag/filter peak groups based on number of distinct adducts
 
-Remove features without good MS/MS spectra
+Rank/filter adduct peaks based on MS/MS intensity
 }
 \examples{
 fp <- system.file("extdata/MSDIAL_Alignment_result_LC-MS.txt", package = "msdialr")
 aligned <- loadAlignmentResults(fp)
-length(unique(aligned$alignment)) # 230
+length(unique(aligned$alignment_id)) # 230
 
-aligned1 <- aligned |> 
+aligned1 <- aligned |>
   assignAdductGroups(verbose = TRUE)
-length(unique(aligned1$feat_group)) # 174
+length(unique(aligned1$adduct_group)) # 174
 plotAdductGroups(aligned1)
 
-aligned2 <- aligned1 |> 
-  filterAdductGroupsBySize(min_group_size = 2)
-length(unique(aligned2$feat_group)) # 36
+aligned2 <- aligned1 |>
+  filterAdductGroupsBySize(min_group_size = 2, filter = TRUE)
+length(unique(aligned2$nm_group)) # 36
 plotAdductGroups(aligned2)
 }

@@ -30,7 +30,7 @@ subtractBlankLevels <- function(x,
 }
 
 
-#' Remove features occurring only in few samples
+#' Flag/filter features occurring only in few samples
 #'
 #' @param x MS-DIAL alignment results table
 #' @param sample_group numeric or character vector defining sample grouping;
@@ -38,15 +38,21 @@ subtractBlankLevels <- function(x,
 #'   without sample grouping (equivalent to \code{rep(1, length(samples))}).
 #' @param min_int minimum intensity that a feature must have, default: 1e3
 #' @param min_frac minimum fraction of samples (of at least one group if
-#'   sample_group is defined accordingly) that contain the feature at an intensity >= min_int, default: 0.5
-#' @param verbose display messages
+#'   sample_group is defined accordingly) that contain the feature at an
+#'   intensity >= min_int, default: 0.5
+#' @param flag_column name of flag column, default: "passes_sparse_filter"
+#' @param filter filter results according to flag, default: FALSE
+#' @param verbose display messages, defaults to the output of
+#'   \code{interactive()}
 #'
 #' @returns an object of the same class as 'x'
 #' @export
-removeSparseFeatures <- function(x,
+filterSparseFeatures <- function(x,
                                  sample_group = NULL,
                                  min_int = 1e3,
                                  min_frac = 0.5,
+                                 flag_column = "passes_sparse_filter",
+                                 filter = FALSE,
                                  verbose = NULL) {
   stopifnot(inherits(x, "data.frame"))
   if(is.null(verbose))
@@ -59,17 +65,24 @@ removeSparseFeatures <- function(x,
   if(is.null(sample_group) || all(sample_group == ""))
     sample_group <- rep(1, length(getIntensityColumns(x)))
   int_mat <- getIntensityMatrix(x)
-  flt <- apply(int_mat, 1, tapply, sample_group, function(x)
+  flag <- apply(int_mat, 1, tapply, sample_group, function(x)
     sum(x >= min_int) / length(x) >= min_frac
   )
-  if(!is.null(dim(flt))) 
-    flt <- apply(flt, 2, any)
-  x_out <- x[flt, ]
-  msg(sprintf("Number of peaks reduced from %d to %d", 
-              nrow(x), 
-              nrow(x_out)),
+  if(!is.null(dim(flag))) 
+    flag <- apply(flag, 2, any)
+  x[[ flag_column ]] <- flag
+  x_out <- if(filter) {
+    x[flag, ]
+  } else {
+    x
+  }
+  msg(sprintf("Found %d of %d peaks passing filter", 
+              sum(flag), 
+              nrow(x)),
       verbose)
-  x_out
+  x_out |> 
+    relocateIntensityColumns() |> 
+    updateIntensityColumnIndex()
 }
 
 
