@@ -11,8 +11,8 @@ removeFactorsByANOVA <- function(x,
                                  sam = NULL, 
                                  fmod = "class + injection_order",
                                  kmod = "class") {
-  if(is.null(sam) && checkSam(x)) {
-    sam <- attr(x, "msdial_sam")
+  if(is.null(sam)) {
+    sam <- getSampleList(x)
     for(col_name in c("injection_order", "order")) {
       if(col_name %in% colnames(sam))
         sam[[ col_name ]] <- as.integer(sam[[ col_name ]])

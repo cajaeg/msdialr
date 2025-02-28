@@ -14,8 +14,9 @@ subtractBlankLevels(
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{blank_idx}{index of blank samples; \code{NULL} to use \code{attr(x,
-"msdial_sam")$file_type == "Blank"}}
+\item{blank_idx}{index of blank samples; if \code{NULL},
+\code{getSampleList(x)$file_type == "Blank"} is used. If this evaluates to
+NULL, 'x' is returned unchanged.}
 
 \item{fun}{function to use for blank level calculation, default: "max"}
 

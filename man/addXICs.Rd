@@ -16,6 +16,7 @@ addXICs(
   smooth = 0,
   max_mz = 5,
   EIC = FALSE,
+  row_index = NULL,
   verbose = NULL,
   pivot_longer = FALSE
 )
@@ -47,6 +48,8 @@ spectra or single m/z values}
 'in_column' contains spectra)}
 
 \item{EIC}{if 'TRUE' add (sum-based) EICs instead of (maximum-based) BPCs}
+
+\item{row_index}{index of rows to process, default NULL = process all rows.}
 
 \item{verbose}{display a progress bar, defaults to the output of
 \code{interactive()}}

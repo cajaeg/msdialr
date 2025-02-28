@@ -4,8 +4,9 @@
 #' subtract summarized values from sample intensities. Possible negative values
 #' resulting from subtraction are replaced by zero.
 #' @param x MS-DIAL alignment results table
-#' @param blank_idx index of blank samples; \code{NULL} to use \code{attr(x,
-#'   "msdial_sam")$file_type == "Blank"}
+#' @param blank_idx index of blank samples; if \code{NULL},
+#'   \code{getSampleList(x)$file_type == "Blank"} is used. If this evaluates to
+#'   NULL, 'x' is returned unchanged.
 #' @param fun function to use for blank level calculation, default: "max"
 #' @param ... further arguments passed to 'fun'
 #'
@@ -16,17 +17,21 @@ subtractBlankLevels <- function(x,
                                 fun = c("max", "median", "average")[1],
                                 ...) {
   if (is.null(blank_idx)) {
-    blank_idx <- attr(x, "msdial_sam")$file_type == "Blank"
+    blank_idx <- getSampleList(x)$file_type == "Blank"
   }
-  int_mat <- getIntensityMatrix(x, as.matrix = TRUE)
-  int_blank <- pmax(0, apply(int_mat[, blank_idx], 1, fun, ...))
-  int_mat_mod <- matrix(
-    pmax(0, int_mat - int_blank, na.rm = TRUE),
-    nrow = nrow(int_mat),
-    ncol = ncol(int_mat)
-  )
-  x[, getIntensityColumns(x)] <- int_mat_mod
-  x
+  if(!is.null(blank_idx)) {
+    int_mat <- getIntensityMatrix(x, as.matrix = TRUE)
+    int_blank <- pmax(0, apply(int_mat[, blank_idx], 1, fun, ...))
+    int_mat_mod <- matrix(
+      pmax(0, int_mat - int_blank, na.rm = TRUE),
+      nrow = nrow(int_mat),
+      ncol = ncol(int_mat)
+    )
+    x[, getIntensityColumns(x)] <- int_mat_mod
+    x
+  } else {
+    x
+  }
 }
 
 
@@ -55,13 +60,14 @@ filterSparseFeatures <- function(x,
                                  filter = FALSE,
                                  verbose = NULL) {
   stopifnot(inherits(x, "data.frame"))
+  class_column <- "class"
   if(is.null(verbose))
     verbose <- interactive()
   msg <- function(x, verbose) 
     if(verbose)
       message(x)
-  if (is.null(sample_group) && checkSam(x))
-    sample_group <- attr(x, "msdial_sam")$class
+  if (is.null(sample_group))
+    sample_group <- getSampleList(x)[[class_column]]
   if(is.null(sample_group) || all(sample_group == ""))
     sample_group <- rep(1, length(getIntensityColumns(x)))
   int_mat <- getIntensityMatrix(x)
@@ -81,8 +87,7 @@ filterSparseFeatures <- function(x,
               nrow(x)),
       verbose)
   x_out |> 
-    relocateIntensityColumns() |> 
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
 
 
@@ -106,8 +111,9 @@ normalizeIntensities <- function(x,
                                  sample_group = NULL,
                                  fun = c("sum", "median")[1],
                                  ...) {
-  if(is.null(sample_group) && checkSam(x))
-    sample_group <- attr(x, "msdial_sam")$class
+  class_column = "class"
+  if(is.null(sample_group))
+    sample_group <- getSampleList(x)[[class_column]]
   if(is.null(sample_group) || all(sample_group == ""))
     sample_group <- rep(1, length(getIntensityColumns(x)))
   int_mat <- getIntensityMatrix(x, as.matrix = TRUE)
@@ -121,20 +127,24 @@ normalizeIntensities <- function(x,
 }
 
 
-#' Filter feature tables according to applied flag/rank functions
+#' Filter feature table according to applied flag/rank functions
 #'
 #' @param x MS-DIAL alignment results table
-#' @param preset preset to use
+#' @param which index selecting filter columns from \code{c("passes_groupsize_filter",
+#'   "rank_MS2", "passes_sparse_filter")}, default: all (\code{c(1:3)})
 #'
 #' @returns filtered alignment table
 #' @noRd
 #' @export
-quickFilter <- function(x, preset = 1) {
-  flt <- switch(
-    preset, 
-    "1" = with(x, passes_groupsize_filter &
-                 is.finite(rank_MS2) & rank_MS2 == 1 &
-                 passes_sparse_filter)
-  )
-  x[flt,]
+applyFilters <- function(x, which = 1:3) {
+  col_names <- c("passes_groupsize_filter",
+                 "rank_MS2",
+                 "passes_sparse_filter")[which]
+  stopifnot(all(col_names %in% colnames(x)))
+  flt <- data.frame(x[, col_names])
+  if("rank_MS2" %in% col_names) {
+    flt[, "rank_MS2"] <- is.finite(flt[, "rank_MS2"]) & flt[, "rank_MS2"] == 1
+  }
+  flt <- apply(flt, 1, all)
+  x[flt, ]
 }

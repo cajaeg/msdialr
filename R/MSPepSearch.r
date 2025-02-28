@@ -300,8 +300,7 @@ searchNIST <- function(x,
   tmp$query <- factor(tmp$query, levels = 1:length(spectra))
   x[[ out_column ]] <- split(tmp, tmp$query)
   x |> 
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
 
 
@@ -345,25 +344,27 @@ acceptNISTres <- function(x,
       x
     }
   out |>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns() 
 }
 
 
-#' Calculate a simple linear score from RI deviation
+#' Calculate a simple score based on RI deviation
 #'
 #' @param ri_dev deviation of observed RI from library RI
 #' @param max_ri_dev deviation greater than this receive the min score; NA values also receive the min score
-#' @param minscore minimum score
-#' @param maxscore maximum score
-#' @return vector
+#' @param minscore minimum score, default 0.75
+#' @param maxscore maximum score, default 1.0
+#' @return numeric vector
 #' @export
 #'
 #' @examples
 #' ri_obs <- 1225
 #' ri_lib <- 1200
 #' scoreRI(ri_obs - ri_lib)
-scoreRI <- function(ri_dev, max_ri_dev = 100, minscore = 0.75, maxscore = 1) {
+scoreRI <- function(ri_dev,
+                    max_ri_dev = 100,
+                    minscore = 0.75,
+                    maxscore = 1) {
   ri_dev[!is.finite(ri_dev)] <- max_ri_dev
   ri_dev <- abs(ri_dev)
   ((pmin(ri_dev, max_ri_dev) - 0) / (max_ri_dev - 0)) * (minscore - maxscore) + maxscore

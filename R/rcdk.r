@@ -47,8 +47,7 @@ addLogP <- function(x, in_column = c("smiles", "NISTres")[1]) {
       dplyr::select(-tidyselect::ends_with("$$"))
   }
   out |>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
 
 

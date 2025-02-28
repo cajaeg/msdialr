@@ -57,6 +57,5 @@ searchClassyFire <- function(x,
   x |> 
     dplyr::left_join(classy, by = "inchikey", suffix = c("", "$$")) |> 
     dplyr::select(-tidyselect::ends_with("$$")) |>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }

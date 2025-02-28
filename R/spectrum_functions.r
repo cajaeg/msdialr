@@ -457,7 +457,8 @@ cleanSpec <- function(x,
 #'   or "spectrum"
 #' @param out_column name of column containing the prepared spectra
 #' @param intrel relative intensity threshold to be applied to each spectrum
-#' @return data.frame
+#' @param row_index index of rows to process, default NULL = process all rows.
+#' @return 'x' with additional column 'out_column'
 #' @export
 #'
 #' @examples
@@ -472,11 +473,15 @@ cleanSpec <- function(x,
 prepareSpectra <- function(x,
                            in_column = c("ms1", "spectrum"),
                            out_column = "s",
-                           intrel = 0.001) {
+                           intrel = 0.001,
+                           row_index = NULL
+                           ) {
   stopifnot(inherits(x, c("matrix", "data.frame", "tbl", "tbl_df")))
   stopifnot(any(in_column %in% colnames(x)))
   in_column <- in_column[which(in_column %in% colnames(x))[1]]
-  s_chr <- x[[ in_column ]]
+  if(is.null(row_index))
+    row_index <- rep(TRUE, nrow(x))
+  s_chr <- x[[ in_column ]][row_index]
   s_mat <- lapply(s_chr, str2spec)
   s_mat <- lapply(s_mat, function(x) {
     x[, "i"] <- ifelse(is.finite(x[, "i"]), x[, "i"], 0)
@@ -499,8 +504,8 @@ prepareSpectra <- function(x,
     x$labelcol <- 1
     return(x)
   })
-  x[[ out_column ]] <- s_df
+  x[[out_column]] <- vector("list", nrow(x))
+  x[[out_column]][row_index] <- s_df
   x|>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }

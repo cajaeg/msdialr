@@ -91,7 +91,12 @@ hcgroup <- function(x,
       hc$height <- sqrt(hc$height)
       hc
     }
-    stats::cutree(cl, h = h, k = k)[-1] - 1
+    tryCatch(
+      stats::cutree(cl, h = h, k = k)[-1] - 1, 
+      error = function(e) {
+        cl$height <- round(cl$height, 6)
+        stats::cutree(cl, h = h, k = k)[-1] - 1
+      })
   }
   else
     1
@@ -168,6 +173,7 @@ emptyplot <- function(message = NULL) {
   invisible(NULL)
 }
 
+
 #' Calculate m/z from chemical formula and adduct
 #'
 #' @param x chemical formula
@@ -214,6 +220,7 @@ fml2mz <- function(x, adduct = NULL, round = 4) {
     mz = base::round(adductmz, round)
   )
 }
+
 
 #' Calculate isotope pattern using 'enviPat'
 #' 
@@ -268,12 +275,13 @@ ion2rule <- function(ions = "[M+H]+") {
     regexpr("\\[[0-9]{0,2}M.*\\][0-9]{0,2}[\\+\\-]{1,2}", ion) != -1
   }
   shortCuts <- cbind(
-    c("M+H", "M+Na", "M+K", "M+NH4", "M+", "M", "M-H", "M+Cl-", "M-"),
+    c("M+H", "M+Na", "M+K", "M+NH4", "M+", "M", "M.", "M-H", "M+Cl-", "M-"),
     c(
       "[M+H]+",
       "[M+Na]+",
       "[M+K]+",
       "[M+NH4]+",
+      "[M]+",
       "[M]+",
       "[M]+",
       "[M-H]-",
@@ -391,34 +399,39 @@ fml2tbl <- function (fml, elements = NULL) {
 }
 
 
-#' List last create file
+#' Find last created file
 #'
 #' @param path file path
 #' @param pattern file pattern
-#' @param ... passed to 
+#' @param ... passed to \code{list.files()}
 #'
 #' @returns character()
 #' @noRd
 findLatestFile <- function(path = ".", pattern = NULL, ...) {
   fls <- list.files(path = path, pattern = pattern, full.names = TRUE, ...)
-  if(length(fls) > 1) {
+  if(length(fls) > 0) {
     mtime <- file.info(fls)$mtime
-    fls <- fls[order(mtime, decreasing = TRUE) == 1]
+    sel <- order(mtime, decreasing = TRUE)[1]
+    message(sprintf("Found %d file(s), selecting %s", length(fls), basename(fls[sel])))
+    fls[sel]
+  } else {
+    fls
   }
-  fls
 }
+
 
 #' Find last created alignment results file in a given folder
 #'
 #' @param path file path
 #' @param pattern file pattern, defaults to "Height.*_\[0-9\]+\\.txt"
-#' @param ... passed to list.files()
+#' @param ... passed to \code{list.files()}
 #'
 #' @returns character()
 #' @export
 findLatestHeightFile <- function(path = ".", pattern = "Height.*_[0-9]+\\.txt", ...) {
   findLatestFile(path = path, pattern = pattern, ...)
 }
+
 
 #' Format numeric IDs
 #'
@@ -439,23 +452,6 @@ formatNumericIDs <- function(x,
   sprintf(paste0(prefix, "%0", n_digits, "d"), x)
 }
 
-#' Check if sample table agrees with intensity columns
-#'
-#' @param x 
-#' @param sam 
-#'
-#' @returns logical()
-#' @noRd
-checkSam <- function(x, sam = NULL) {
-  if(is.null(sam))
-    sam <- attr(x, "msdial_sam")
-  if(all(sam$name == colnames(x)[getIntensityColumns(x)])) {
-    TRUE
-  } else {
-    warning("check 'sam'")
-    FALSE
-  }
-}
 
 #' Convert m/z to neutral mass
 #'

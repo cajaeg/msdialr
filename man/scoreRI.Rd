@@ -2,7 +2,7 @@
 % Please edit documentation in R/MSPepSearch.r
 \name{scoreRI}
 \alias{scoreRI}
-\title{Calculate a simple linear score from RI deviation}
+\title{Calculate a simple score based on RI deviation}
 \usage{
 scoreRI(ri_dev, max_ri_dev = 100, minscore = 0.75, maxscore = 1)
 }
@@ -11,15 +11,15 @@ scoreRI(ri_dev, max_ri_dev = 100, minscore = 0.75, maxscore = 1)
 
 \item{max_ri_dev}{deviation greater than this receive the min score; NA values also receive the min score}
 
-\item{minscore}{minimum score}
+\item{minscore}{minimum score, default 0.75}
 
-\item{maxscore}{maximum score}
+\item{maxscore}{maximum score, default 1.0}
 }
 \value{
-vector
+numeric vector
 }
 \description{
-Calculate a simple linear score from RI deviation
+Calculate a simple score based on RI deviation
 }
 \examples{
 ri_obs <- 1225

@@ -11,7 +11,7 @@ findLatestHeightFile(path = ".", pattern = "Height.*_[0-9]+\\\\.txt", ...)
 
 \item{pattern}{file pattern, defaults to "Height.*_[0-9]+\\.txt"}
 
-\item{...}{passed to list.files()}
+\item{...}{passed to \code{list.files()}}
 }
 \value{
 character()

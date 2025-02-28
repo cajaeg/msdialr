@@ -18,23 +18,28 @@
 #' @param prefix Prefix added to alignment_id, e.g. "hilic_pos_". If NULL (the
 #'   default), alignment_id's are kept unchanged.
 #'
-#' @return data.frame with attributes "msdial_sam" and "intensity_columns".
-#'
-#'   \code{attr(x, "msdial_sam")} is derived from the file header and contains
-#'   sample class information as defined in MS-DIAL.
-#'
-#'   \code{attr(x, "intensity_columns")} is an index of columns holding MS
-#'   intensities (sample columns).
+#' @return a data.frame with attribute "msdial_sam", a sample list derived from
+#'   the file header containing sample class information as defined in MS-DIAL.
+#'   This attribute can be manipulated e.g. to re-define sample groups or remove
+#'   unwanted intensity columns. A copy of this attribute is attached as a
+#'   second attribute "sam_orig", which is required to keep track of intensity
+#'   and non-intensity columns. This attribute should not be manipulated.
+#' 
 #' @export
-#'
+#' 
 #' @examples
 #' fp <- system.file("extdata", package = "msdialr")
 #' height_file <- file.path(fp, "MSDIAL_Alignment_result_GCQTOF.txt")
-#' msd <- loadAlignmentResults(height_file)
+#' msd <- loadAlignmentResults(height_file) |> dplyr::as_tibble()
 #' head(msd)
+#' head(getIntensityMatrix(msd)) # only the intensity matrix part
+#' 
+#' sam <- getSampleList(msd) # sample information as defined in MS-DIAL
+#' 
+#' sam1 <- sam[-2, ] # remove a sample
+#' msd1 <- setSampleList(msd, sam1)
+#' head(getIntensityMatrix(msd1)) # corresponding column is removed
 #'
-#' int_mat <- getIntensityMatrix(msd)
-#' hist(apply(int_mat, 1, median))
 loadAlignmentResults <-
   function(x,
            raw_folder = NULL,
@@ -45,18 +50,9 @@ loadAlignmentResults <-
     stopifnot(file.exists(x))
     if (file.info(x)$isdir) {
       fp <- x
-      fls <- list.files(
-        fp,
-        pattern = "Height.*[0-9]+\\.txt|Area.*[0-9]+\\.txt|AlignResult.*\\.msdial",
-        full.names = TRUE,
-        ignore.case = TRUE
-      )
-      stopifnot(length(fls) > 0)
-      mtime <- file.info(fls)$mtime
-      sel <- which(order(mtime, decreasing = TRUE) == 1)
-      message(sprintf("Found %d alignment results file(s) - using %s", 
-                      length(fls), fls[sel]))
-      x <- fls[sel]
+      pat <- "Height.*[0-9]+\\.txt|Area.*[0-9]+\\.txt|AlignResult.*\\.msdial"
+      fls <- findLatestFile(fp, pat)
+      x <- fls
     }
     if (is.null(raw_folder))
       raw_folder <- dirname(x)
@@ -89,10 +85,10 @@ loadAlignmentResults <-
     cn <- gsub("[^a-zA-Z0-9]+", "_", tolower(trimws(cn)))
     cn <- sub("_$", "", cn)
     cn <- sub("^_", "", cn)
-    cn[5] <- "name"
+    cn[5] <- "id"
     colnames(msdial_sam) <- cn
     rownames(msdial_sam) <- NULL
-    msdial_sam <- msdial_sam[, c(grep("^name$", colnames(msdial_sam)), which(!grepl("^name$", colnames(msdial_sam))))]
+    msdial_sam <- msdial_sam[, c(grep("^id$", colnames(msdial_sam)), which(!grepl("^id$", colnames(msdial_sam))))]
     other_columns <- 1:(intensity_columns[1] - 1)
     ##
     ## evaluate body
@@ -124,8 +120,6 @@ loadAlignmentResults <-
       cn[cn == "ms_ms_spectrum"] <- "ms2"
     }
     colnames(out)[other_columns] <- cn
-    ## msdial_sam$name <- colnames(out)[intensity_columns] # include sample column names in 'msdial_sam'
-    ## msdial_sam <- msdial_sam[,c(5,1:4)]
     for (i in which(apply(out, 2, function(x)
       all(x %in% c("False", "True"))))) {
       out[, i] <- as.logical(out[, i]) # encode as logical where appropriate
@@ -133,6 +127,7 @@ loadAlignmentResults <-
     if (!is.null(sample_names)) {
       if (length(sample_names) == length(intensity_columns)) {
         colnames(out)[intensity_columns] <- sample_names
+        msdial_sam$id <- sample_names
       } else {
         stop("supplied sample names do not match number of sample columns")
       }
@@ -147,7 +142,7 @@ loadAlignmentResults <-
                               ignore.case = TRUE,
                               full.names = TRUE)
       pat <- sub(raw_suffix_pat, "", basename(raw_files), ignore.case = TRUE)
-      o <- match(msdial_sam$name, pat)
+      o <- match(msdial_sam$id, pat)
       raw_files <- raw_files[o]
       msdial_sam$raw_file <- raw_files
     } else {
@@ -158,7 +153,7 @@ loadAlignmentResults <-
         formatNumericIDs(out$alignment_id, prefix = prefix)
     } 
     attr(out, "msdial_sam") <- msdial_sam
-    attr(out, "intensity_columns") <- intensity_columns
+    attr(out, "sam_orig") <- msdial_sam
     message(sprintf(
       "%s data loaded for %d compounds x %d samples",
       msd_mode,
@@ -167,54 +162,6 @@ loadAlignmentResults <-
     ))
     return(out)
   }
-
-
-#' Get index of intensity columns
-#' @rdname loadAlignmentResults
-#' 
-#' @param x MS-DIAL alignment file
-#'
-#' @return numeric()
-#' @export
-getIntensityColumns <- function(x) {
-  attr(x, "intensity_columns")
-}
-
-
-#' Set index of intensity columns
-#' @rdname loadAlignmentResults
-#' 
-#' @param x MS-DIAL alignment file
-#' @param intensity_columns numeric() or NULL
-#'
-#' @return 'x' with attribute 'intensity_columns'
-#' @export
-setIntensityColumns <- function(x, intensity_columns = NULL) {
-  stopifnot(is.numeric(intensity_columns) || is.null(intensity_columns))
-  attr(x, "intensity_columns") <- intensity_columns
-  x
-}
-
-
-#' Get peak intensity part of MS-DIAL alignment file
-#' @rdname loadAlignmentResults
-#'
-#' @param x MS-DIAL alignment file
-#' @param as.matrix ensure that return value is numeric matrix
-#'
-#' @return an object of the same class as 'x', or numeric matrix when
-#'   \code{as.matrix == TRUE}
-#' @export
-getIntensityMatrix <- function(x, as.matrix = TRUE) {
-  cidx <- getIntensityColumns(x)
-  if(as.matrix) {
-    out <- data.matrix(x[, cidx])
-    rownames(out) <- make.unique(x$alignment_id)
-    out
-  } else {
-    x[, cidx]
-  }
-}
 
 
 #' Get sample list
@@ -237,10 +184,45 @@ getSampleList <- function(x) {
 #'
 #' @returns 'x' with new or updated attribute 'msdial_sam'
 #' @export
-setSampleList <- function(x, sam = NULL) {
-  stopifnot(inherits(sam, "data.frame") || is.null(sam))
+setSampleList <- function(x, sam) {
+  stopifnot(inherits(sam, "data.frame"))
   attr(x, "msdial_sam") <- sam
-  x
+  removeUnusedIntensityColumns(x, sam)
+}
+
+
+#' Get index of intensity columns
+#' @rdname loadAlignmentResults
+#' 
+#' @param x MS-DIAL alignment file
+#'
+#' @return numeric()
+#' @export
+getIntensityColumns <- function(x) {
+  id_column <- "id"
+  sam <- getSampleList(x)
+  match(sam[[id_column]], colnames(x))
+}
+
+
+#' Get intensity matrix part of MS-DIAL alignment results
+#' @rdname loadAlignmentResults
+#'
+#' @param x MS-DIAL alignment file
+#' @param as.matrix ensure that return value is a numeric matrix, default: TRUE
+#'
+#' @return a numeric matrix, or an object of the same class as 'x' for
+#'   \code{as.matrix == FALSE}
+#' @export
+getIntensityMatrix <- function(x, as.matrix = TRUE) {
+  cidx <- getIntensityColumns(x)
+  if(as.matrix) {
+    out <- data.matrix(x[, cidx])
+    rownames(out) <- make.unique(as.character(x$alignment_id))
+    out
+  } else {
+    x[, cidx]
+  }
 }
 
 
@@ -263,65 +245,32 @@ relocateIntensityColumns <- function(x) {
 }
 
 
-#' Update attribute 'intensity_columns' according to 'sam'
-#' @rdname loadAlignmentResults
+#' Remove intensity columns not referenced in 'sam'
 #'
 #' @param x MS-DIAL alignment results table
 #' @param sam sample table. If NULL, uses \code{attr(x, "msdial_sam")}
 #'
-#' @returns an object of the same class as 'x'
-#' @export
-updateIntensityColumnIndex <- function(x, sam = NULL) {
-  sam_sample_name_column <- "name"
-  attr_intensity_columns <- "intensity_columns"
-  if(is.null(sam)) {
+#' @return an object of the same class as 'x'
+#' @noRd
+removeUnusedIntensityColumns <- function(x, sam = NULL) {
+  id_column <- "id"
+  if (is.null(sam)) {
     sam <- getSampleList(x)
   }
-  if(!is.null(sam)) {
-    col_idx <- match(sam[[ sam_sample_name_column ]], colnames(x))
-    if(any(!is.finite(col_idx)))
-      warning("'sam' not synchronized with column names")
-    attr(x, attr_intensity_columns) <- col_idx
-    x
+  if (!is.null(sam)) {
+    sam_orig <- attr(x, "sam_orig")
+    cidx <- match(sam_orig[[id_column]], colnames(x))
+    flt <- cidx[ !colnames(x)[cidx] %in% sam[[id_column]] ]
+    if (length(flt) > 0) {
+      message(sprintf("Removing %d of %d intensity columns", length(flt), length(cidx)))
+      x[, -flt]
+    } else {
+      x
+    }
   } else {
     x
   }
 }
-
-
-# #' Update sample column index
-# #'
-# #' @param x MS-DIAL alignment file
-# #' @param ref reference vector of sample names, typically from a separate sample list
-# #'
-# #' @return 'x' with updated attribute 'intensity_columns'
-# #' @export
-# updateSampleColumnIndex <- function(x, ref = NULL) {
-#   if (!is.null(ref)) {
-#     map <- match(ref, colnames(x))
-#     if (any(!is.finite(map))) {
-#       message(sprintf(
-#         "%d sample(s) from 'ref' not found in 'x': %s\nthis/these should be removed from 'ref' to preserve index",
-#         sum(!is.finite(map)),
-#         paste(ref[!is.finite(map)], sep = "", collapse = ", ")
-#       ))
-#     }
-#     icol_old <- getIntensityColumns(x)
-#     if (length(icol_old) > sum(is.finite(map))) {
-#       message(sprintf(
-#         "%d sample(s) from 'x' not found in 'ref': %s\nremoving this/these from index",
-#         sum(!colnames(x)[icol_old] %in% ref),
-#         paste(colnames(x)[icol_old][!colnames(x)[icol_old] %in% ref],
-#               sep = "", collapse = ", ")
-#       ))
-#     }
-#     attr(x, "intensity_columns") <- map[is.finite(map)]
-#     x
-#   } else {
-#     x
-#   }
-# }
-# 
 
 
 #' Create a new MSP library from MS-DIAL alignment results
@@ -329,11 +278,12 @@ updateIntensityColumnIndex <- function(x, sam = NULL) {
 #' @param x alignment result table as created by loadAlignmentResult()
 #' @param intabs intensity threshold applied to mass spectra (PEAKS field in the
 #'   resulting msp)
-#' @param makeNamesUnique apply a make.unique() to the spectra names
-#'   (default)
-#' @param digits numeric(2) giving decimal digits to round m/z and intensity values to
+#' @param make.unique apply a make.unique() to spectra names in case of
+#'   duplicates, default TRUE
+#' @param digits numeric(2) giving decimal digits to round m/z and intensity
+#'   values to
 #' @param ... (currently unused)
-#'
+#' 
 #' @return data.frame
 #' @export
 #'
@@ -364,8 +314,8 @@ alignmentResult2msp <- function(x,
   spectra_txt <- lapply(spectra, spec2str)
   out <- data.frame(matrix(nrow = nrow(x), ncol = 0))
   tmp <- x$metabolite_name
-  if (any(duplicated(tmp)) && makeNamesUnique)
-    tmp <- make.unique(tmp, sep = "_")
+  if (any(duplicated(tmp)) && make.unique)
+    tmp <- base::make.unique(tmp, sep = "_")
   out$Name <- tmp
   out$Formula <- x$formula
   out$RETENTIONTIME <- x$average_rt_min

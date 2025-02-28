@@ -18,12 +18,13 @@ alignmentResult2msp(
 \item{intabs}{intensity threshold applied to mass spectra (PEAKS field in the
 resulting msp)}
 
-\item{makeNamesUnique}{apply a make.unique() to the spectra names
-(default)}
-
-\item{digits}{numeric(2) giving decimal digits to round m/z and intensity values to}
+\item{digits}{numeric(2) giving decimal digits to round m/z and intensity
+values to}
 
 \item{...}{(currently unused)}
+
+\item{make.unique}{apply a make.unique() to spectra names in case of
+duplicates, default TRUE}
 }
 \value{
 data.frame

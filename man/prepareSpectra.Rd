@@ -8,7 +8,8 @@ prepareSpectra(
   x,
   in_column = c("ms1", "spectrum"),
   out_column = "s",
-  intrel = 0.001
+  intrel = 0.001,
+  row_index = NULL
 )
 }
 \arguments{
@@ -21,9 +22,11 @@ or "spectrum"}
 \item{out_column}{name of column containing the prepared spectra}
 
 \item{intrel}{relative intensity threshold to be applied to each spectrum}
+
+\item{row_index}{index of rows to process, default NULL = process all rows.}
 }
 \value{
-data.frame
+'x' with additional column 'out_column'
 }
 \description{
 Convert spectra from character vector to data.frame representation, apply an intensity threshold and

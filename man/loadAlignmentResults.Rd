@@ -2,13 +2,11 @@
 % Please edit documentation in R/MS-DIAL.r
 \name{loadAlignmentResults}
 \alias{loadAlignmentResults}
-\alias{getIntensityColumns}
-\alias{setIntensityColumns}
-\alias{getIntensityMatrix}
 \alias{getSampleList}
 \alias{setSampleList}
+\alias{getIntensityColumns}
+\alias{getIntensityMatrix}
 \alias{relocateIntensityColumns}
-\alias{updateIntensityColumnIndex}
 \title{Import MS-DIAL alignment results}
 \usage{
 loadAlignmentResults(
@@ -19,19 +17,15 @@ loadAlignmentResults(
   prefix = NULL
 )
 
-getIntensityColumns(x)
+getSampleList(x)
 
-setIntensityColumns(x, intensity_columns = NULL)
+setSampleList(x, sam)
+
+getIntensityColumns(x)
 
 getIntensityMatrix(x, as.matrix = TRUE)
 
-getSampleList(x)
-
-setSampleList(x, sam = NULL)
-
 relocateIntensityColumns(x)
-
-updateIntensityColumnIndex(x, sam = NULL)
 }
 \arguments{
 \item{x}{MS-DIAL alignment results table}
@@ -51,33 +45,26 @@ column names. No check for proper order is performed.}
 \item{prefix}{Prefix added to alignment_id, e.g. "hilic_pos_". If NULL (the
 default), alignment_id's are kept unchanged.}
 
-\item{intensity_columns}{numeric() or NULL}
+\item{sam}{data.frame or similar, or NULL}
 
-\item{as.matrix}{ensure that return value is numeric matrix}
-
-\item{sam}{sample table. If NULL, uses \code{attr(x, "msdial_sam")}}
+\item{as.matrix}{ensure that return value is a numeric matrix, default: TRUE}
 }
 \value{
-data.frame with attributes "msdial_sam" and "intensity_columns".
-
-\code{attr(x, "msdial_sam")} is derived from the file header and contains
-sample class information as defined in MS-DIAL.
-
-\code{attr(x, "intensity_columns")} is an index of columns holding MS
-intensities (sample columns).
-
-numeric()
-
-'x' with attribute 'intensity_columns'
-
-an object of the same class as 'x', or numeric matrix when
-\code{as.matrix == TRUE}
+a data.frame with attribute "msdial_sam", a sample list derived from
+the file header containing sample class information as defined in MS-DIAL.
+This attribute can be manipulated e.g. to re-define sample groups or remove
+unwanted intensity columns. A copy of this attribute is attached as a
+second attribute "sam_orig", which is required to keep track of intensity
+and non-intensity columns. This attribute should not be manipulated.
 
 data.frame
 
 'x' with new or updated attribute 'msdial_sam'
 
-an object of the same class as 'x'
+numeric()
+
+a numeric matrix, or an object of the same class as 'x' for
+\code{as.matrix == FALSE}
 
 an object of the same class as 'x'
 }
@@ -89,9 +76,14 @@ versions >= 4.0.
 \examples{
 fp <- system.file("extdata", package = "msdialr")
 height_file <- file.path(fp, "MSDIAL_Alignment_result_GCQTOF.txt")
-msd <- loadAlignmentResults(height_file)
+msd <- loadAlignmentResults(height_file) |> dplyr::as_tibble()
 head(msd)
+head(getIntensityMatrix(msd)) # only the intensity matrix part
 
-int_mat <- getIntensityMatrix(msd)
-hist(apply(int_mat, 1, median))
+sam <- getSampleList(msd) # sample information as defined in MS-DIAL
+
+sam1 <- sam[-2, ] # remove a sample
+msd1 <- setSampleList(msd, sam1)
+head(getIntensityMatrix(msd1)) # corresponding column is removed
+
 }

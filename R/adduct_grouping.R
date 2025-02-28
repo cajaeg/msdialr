@@ -71,8 +71,7 @@ assignAdductGroups <- function(x,
                             rt_group_lbl)
   x[[ group_column ]] <- peak_group_lbl
   x |> 
-    relocateIntensityColumns() |> 
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
 
 
@@ -155,8 +154,7 @@ filterAdductGroupsBySize <- function(x,
     verbose
   )
   x_out |>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
 
 
@@ -198,8 +196,8 @@ filterAdductGroupsByMS2 <- function(x,
   stopifnot(inherits(x, "data.frame"))
   stopifnot(all(c(group_column, ms2_column) %in% colnames(x)))
   x_adduct_group <- x[[group_column]]
-  x_ms2 <- x[, ms2_column] |> 
-    setSampleList(NULL) # avoid warning in 'prepareSpectra()'
+  x_ms2 <- x[, ms2_column]
+  attr(x_ms2, "msdial_sam") <- NULL # avoid warning in prepareSpectra()
   s_ms2 <- prepareSpectra(x_ms2, ms2_column)[["s"]]
   tic_ms2 <- sapply(s_ms2, function(s)
     max(0, sum(s[, 2]), na.rm = TRUE))
@@ -223,7 +221,6 @@ filterAdductGroupsByMS2 <- function(x,
   ),
   verbose)
   x_out |>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
 

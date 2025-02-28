@@ -342,6 +342,7 @@ scaleChrom <- function(chrom,
 #' @param max_mz restrict BPC extraction to the 'max_mz' highest peaks (if
 #'   'in_column' contains spectra)
 #' @param EIC if 'TRUE' add (sum-based) EICs instead of (maximum-based) BPCs
+#' @param row_index index of rows to process, default NULL = process all rows. 
 #' @param verbose display a progress bar, defaults to the output of
 #'   \code{interactive()}
 #' @param pivot_longer transform resulting BPC matrices to long format. Useful
@@ -363,6 +364,7 @@ addXICs <- function(x,
                     smooth = 0,
                     max_mz = 5,
                     EIC = FALSE,
+                    row_index = NULL,
                     verbose = NULL,
                     pivot_longer = FALSE) {
   stopifnot(in_column %in% colnames(x))
@@ -374,16 +376,18 @@ addXICs <- function(x,
   stopifnot(!is.null(xraw))
   if (inherits(xraw, "xcmsRaw"))
     xraw <- list(xraw)
-  mz_col <- x[[in_column]]
-  mz <- if (is.list(mz_col))
-    # assume in_column holds a list of spectra
-    lapply(mz_col, function(spec)
+  if(is.null(row_index))
+    row_index <- rep(TRUE, nrow(x))
+  xmz <- x[[in_column]][row_index]
+  mz <- if (is.list(xmz))
+    # in_column is a list of spectra
+    lapply(xmz, function(spec)
       spec[order(-spec[, 2]), ][1:min(max_mz, nrow(spec)), ][, 1])
-  else
-    mz <- as.numeric(unlist(mz_col))
+  else # in_column is a numeric vector
+    mz <- as.numeric(unlist(xmz))
   rt_column <- rt_column[which(rt_column %in% colnames(x))[1]]
-  rt <- x[[rt_column]]
-  out <- vector("list", nrow(x))
+  rt <- x[[rt_column]][row_index]
+  out <- vector("list", length(mz))
   if (verbose) {
     pb <- utils::txtProgressBar(min = 0,
                                 max = length(out),
@@ -421,8 +425,8 @@ addXICs <- function(x,
     } else
       tmp
   }
-  x[[out_column]] <- out
+  x[[out_column]] <- vector("list", nrow(x))
+  x[[out_column]][row_index] <- out
   x |>
-    relocateIntensityColumns() |>
-    updateIntensityColumnIndex()
+    relocateIntensityColumns()
 }
