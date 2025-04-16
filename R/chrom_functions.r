@@ -12,6 +12,7 @@
 #' @param zeroVal value to use for intensities <= 0 (typically NA or 0)
 #' @param smooth window size for moving average smoother, 0 = no smoothing
 #' @param EIC if 'TRUE' return a (sum-based) EIC instead of a (maximum-based) BPC
+#' @param file_label set \code{attr(, "from_file")} to this label (used by \code{plotChrom()})
 #'
 #' @return A matrix with scan wise (rows) intensities for all requested m/z's
 #'   (columns), or a list of such matrices.
@@ -41,13 +42,14 @@
 #' xic_scaled <- scaleChrom(xic, scope = "by_file")
 #' plotChrom(xic_scaled)
 getChrom <- function(xraw,
-                   mz = NULL,
-                   mz_dev = 0.01,
-                   rt = NULL,
-                   rt_dev = 2,
-                   zeroVal = NA,
-                   smooth = 0,
-                   EIC = FALSE) {
+                     mz = NULL,
+                     mz_dev = 0.01,
+                     rt = NULL,
+                     rt_dev = 2,
+                     zeroVal = NA,
+                     smooth = 0,
+                     EIC = FALSE,
+                     file_label = NULL) {
   checkFinite <- function(x)
     if (!is.null(x) && any(!is.finite(x)))
       NULL
@@ -68,7 +70,8 @@ getChrom <- function(xraw,
         rt_dev = rt_dev,
         zeroVal = zeroVal,
         smooth = smooth,
-        EIC = EIC
+        EIC = EIC,
+        file_label = file_label[i]
       )
     }
     return(out)
@@ -88,7 +91,11 @@ getChrom <- function(xraw,
       attr(out, "mz") <- mz
       attr(out, "mz_dev") <- mz_dev
     }
-    attr(out, "from_file") <- basename(xraw@filepath[])
+    attr(out, "from_file") <-
+      if (is.null(file_label))
+        basename(xraw@filepath[])
+    else
+      file_label
     return(out)
   }
 }
@@ -96,12 +103,10 @@ getChrom <- function(xraw,
 #' @rdname getChrom
 #' @export
 getTIC <- function(xraw,
-                   zeroVal = NA,
-                   smooth = 0) {
+                   ...) {
   getChrom(xraw,
-           zeroVal = zeroVal,
-           smooth = smooth,
-           EIC = FALSE)
+           EIC = TRUE, 
+           ...)
 }
 
 #' @rdname getChrom
@@ -426,7 +431,7 @@ addXICs <- function(x,
       tmp
   }
   x[[out_column]] <- vector("list", nrow(x))
-  x[[out_column]][row_index] <- out
+  x[[out_column]][which(row_index)] <- out
   x |>
     relocateIntensityColumns()
 }

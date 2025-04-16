@@ -8,13 +8,17 @@ mspepsearch(
   spec,
   searchtype = "I",
   presearchtype = "d",
-  hits = 10,
+  searchoption = "v",
   libs = c("mainlib", "replib"),
+  hits = 10,
+  precursor_mz = NULL,
+  precursor_mz_dev = NULL,
+  ms_mz_dev = NULL,
+  mzlimits = c(-1, -1),
   ri_obs = NULL,
   max_ri_dev = 100,
   ri_minscore = 0.9,
-  mzlimits = c(-1, -1),
-  localRdata = getOption("msdialr_localNISTrda"),
+  localRdata = NULL,
   .debug = FALSE
 )
 }
@@ -22,20 +26,60 @@ mspepsearch(
 \item{spec}{mass spectrum: matrix or dataframe with m/z and intensity in the
 first two columns, or a list of matrices}
 
-\item{searchtype}{one of "I" (identity, default), "Q" (quick identity), "S"
-(simple similarity), "H" (hybrid similarity), "L" (neutral loss
-similarity), "M" (ms/ms in EI library), "P" (peptide ms/ms search in a
-ms/ms library (use peak annotations and weighting), "G" (generic ms/ms
-search in a ms/ms library (no peak annotations or weighting used))}
+\item{searchtype}{one of the \emph{low-res} search types:
+\describe{
+\item{I}{identity, default}
+\item{Q}{quick identity}
+\item{S}{simple similarity}
+\item{H}{hybrid similarity}
+\item{L}{neutral loss similarity}
+\item{M}{ms/ms in EI library}
+}
+... or a \emph{high-res} search types:
+\describe{
+\item{P}{peptide ms/ms search in a ms/ms library (use peak annotations and weighting}
+\item{G}{generic ms/ms search in a ms/ms library (no peak annotations or weighting used}
+\item{D}{score is pure dot product}
+}}
 
-\item{presearchtype}{one of "d" (standard (use pre-indexed peaks); default),
-"s" (sequential (compare to all library spectra)), "f" (fast presearch (use
-pre-indexed peaks)), "m" (precursor ion m/z within precursor ion
-uncertainty - only for MS/MS search (P or G))}
+\item{presearchtype}{one of the following:
+\describe{
+\item{d}{standard (use pre-indexed peaks)}
+\item{s}{sequential (compare to all library spectra)}
+\item{f}{fast presearch (use pre-indexed peaks)}
+\item{k[n]}{Compare spectra with the same n first segments of InChIKey (n=1,2,3); k is the same as k1}
+\item{m}{precursor ion m/z within precursor ion m/z uncertainty - only for HiRes search \{PGD\}, incompatible with u, y}
+}}
+
+\item{searchoption}{one or more of the following as one character string, e.g. "rpx":
+\describe{
+\item{r}{reverse search}
+\item{p}{penalize rare compounds (I in Mainlib & Replib only)}
+\item{x}{do not output hit probabilities}
+}
+for high-res search (PGD) only:
+\describe{
+\item{j}{hit reJection; Pj: reject non-peptide hits, Gj: reject peptide hits}
+\item{a}{alternative peak matching in computing match factors (recommended)}
+\item{v}{output Rev-Dot (reverse match factor)}
+\item{i}{ignore peaks within zi or max(z,m) m/z units around precursor m/z; see /ZI, /Z, /M option}
+\item{leh[n]}{ms/ms search threshold: l Low, e mEdium, h High(default), hn (n=1..9) Higher}
+}
+for peptide search (P) only:
+\describe{
+\item{oqn}{o Use OMSSA score; q Q-tof; n use number of replicates}
+}}
+
+\item{libs}{libraries to search (default: c("mainlib", "replib"))}
 
 \item{hits}{how many hits to return, default 10}
 
-\item{libs}{libraries to search (default: c("mainlib", "replib"))}
+\item{precursor_mz_dev}{/Z[PPM] parameter = precursor ion m/z uncertainty,
+0.00006-500 m/z units (default=1.6) or 0.015-1e5 ppm, only for {PGD}}
+
+\item{ms_mz_dev}{/M[PPM] parameter = ms peak m/z uncertainty, 0.00006-500 m/z units (default=0.6) or 0.015-1e5 ppm, only for {PGD}}
+
+\item{mzlimits}{set m/z limits for spectral comparison}
 
 \item{ri_obs}{measured retention index (RI)}
 
@@ -43,12 +87,10 @@ uncertainty - only for MS/MS search (P or G))}
 
 \item{ri_minscore}{minimum RI score; passed to \code{scoreRI()}}
 
-\item{mzlimits}{set m/z limits for spectral comparison}
-
 \item{localRdata}{attach meta data from local .rda (path to .rda or object
 already loaded in workspace)}
 
-\item{.debug}{if TRUE keep temporary files created by MSPepSearch}
+\item{.debug}{if TRUE keep temporary files created by MSPepSearch and return raw MSPepSearch output}
 }
 \value{
 data.frame
@@ -64,9 +106,40 @@ your .Rprofile: \code{options(msdialr_mspepsearch_path =
 Tested with MSPepSearch64 v2019_02_22.
 }
 \examples{
+# standard nominal mass EI search
 \dontrun{
 spec <- str2spec("39:74 41:150 65:49 77:84 91:72 95:142 107:275 135:999 136:103 150:262")
 mspepsearch(spec)
 mspepsearch(spec, ri_obs = 1300)
+}
+# high-res search without and with precursor m/z
+\dontrun{
+spec <- str2spec(
+  "57.0696:128 69.0332:101 86.0597:146 97.0282:641 114.0548:307 125.0595:86 129.0657:197 157.0605:999 185.0918:168 213.1231:76"
+)
+mspepsearch(spec,
+            searchtype = "G",
+            searchoption = "u",
+            libs = "nist_msms")
+mspepsearch(
+  spec,
+  searchtype = "G",
+  searchoption = "m",
+  precursor_mz = 213.1234,
+  libs = "nist_msms"
+)
+}
+# peptide search (= weighted high-res search)
+\dontrun{
+spec <- str2spec(
+  "226.0814:179 243.108:999 342.1763:539 411.1969:194 519.2925:326 524.2802:225 620.3403:345 820.4613:225 1161.6263:473 1162.6259:263"
+)
+mspepsearch(
+  spec,
+  searchtype = "P",
+  searchoption = "m",
+  precursor_mz = 1161.63,
+  libs = "nistmab_v20190711"
+)
 }
 }

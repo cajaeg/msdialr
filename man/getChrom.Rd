@@ -14,10 +14,11 @@ getChrom(
   rt_dev = 2,
   zeroVal = NA,
   smooth = 0,
-  EIC = FALSE
+  EIC = FALSE,
+  file_label = NULL
 )
 
-getTIC(xraw, zeroVal = NA, smooth = 0)
+getTIC(xraw, ...)
 
 plotTIC(xraw, zeroVal = NA, smooth = 0, ...)
 }
@@ -39,6 +40,8 @@ range}
 \item{smooth}{window size for moving average smoother, 0 = no smoothing}
 
 \item{EIC}{if 'TRUE' return a (sum-based) EIC instead of a (maximum-based) BPC}
+
+\item{file_label}{set \code{attr(, "from_file")} to this label (used by \code{plotChrom()})}
 
 \item{...}{arguments passed to further functions}
 }

@@ -4,7 +4,7 @@
 #' subtract summarized values from sample intensities. Possible negative values
 #' resulting from subtraction are replaced by zero.
 #' @param x MS-DIAL alignment results table
-#' @param blank_idx index of blank samples; if \code{NULL},
+#' @param blank_idx numeric or logical index of blank samples; if \code{NULL},
 #'   \code{getSampleList(x)$file_type == "Blank"} is used. If this evaluates to
 #'   NULL, 'x' is returned unchanged.
 #' @param fun function to use for blank level calculation, default: "max"
@@ -20,16 +20,23 @@ subtractBlankLevels <- function(x,
     blank_idx <- getSampleList(x)$file_type == "Blank"
   }
   if(!is.null(blank_idx)) {
-    int_mat <- getIntensityMatrix(x, as.matrix = TRUE)
-    int_blank <- pmax(0, apply(int_mat[, blank_idx], 1, fun, ...))
-    int_mat_mod <- matrix(
-      pmax(0, int_mat - int_blank, na.rm = TRUE),
-      nrow = nrow(int_mat),
-      ncol = ncol(int_mat)
-    )
-    x[, getIntensityColumns(x)] <- int_mat_mod
-    x
+    if((is.logical(blank_idx) && sum(blank_idx) > 0) ||
+       (is.numeric(blank_idx) && length(blank_idx) > 0)) {
+      int_mat <- getIntensityMatrix(x, as.matrix = TRUE)
+      int_blank <- pmax(0, apply(int_mat[, blank_idx], 1, fun, ...))
+      int_mat_mod <- matrix(
+        pmax(0, int_mat - int_blank, na.rm = TRUE),
+        nrow = nrow(int_mat),
+        ncol = ncol(int_mat)
+      )
+      x[, getIntensityColumns(x)] <- int_mat_mod
+      x
+    } else {
+      warning("blank index does not indicate any blank sample")
+      x
+    }
   } else {
+    warning("blank index is NULL")
     x
   }
 }
@@ -71,6 +78,7 @@ filterSparseFeatures <- function(x,
   if(is.null(sample_group) || all(sample_group == ""))
     sample_group <- rep(1, length(getIntensityColumns(x)))
   int_mat <- getIntensityMatrix(x)
+  stopifnot(ncol(int_mat) == length(sample_group))
   flag <- apply(int_mat, 1, tapply, sample_group, function(x)
     sum(x >= min_int) / length(x) >= min_frac
   )

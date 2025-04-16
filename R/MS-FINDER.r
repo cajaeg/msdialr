@@ -512,18 +512,22 @@ readFGT <-
       out <- lapply(1:length(starts), function(i) {
         read.compound(txt[starts[i]:ends[i]])
       })
-      SF <- sapply(out, function(x)
-        x$cmpd$name)
-      StrucPaths <- file.path(dirname(file),
-                              sub("\\.fgt", "", basename(file)),
-                              paste0(SF, ".sfd"))
-      hasStruc <- file.exists(StrucPaths)
-      if (any(hasStruc)) {
-        Struc <- lapply(StrucPaths[hasStruc], readFGT)
-        for (i in which(hasStruc)) {
-          if (!is.null(Struc[[i]]))
-            out[[i]] <- c(out[[i]], structure = Struc[[i]][order(-sapply(Struc[[i]], function(x)
-              x[[1]]$totalscore))])
+      if (readStructures) {
+        SF <- sapply(out, function(x)
+          x$cmpd$name)
+        StrucPaths <- file.path(dirname(file),
+                                sub("\\.fgt", "", basename(file)),
+                                paste0(SF, ".sfd"))
+        hasStruc <- file.exists(StrucPaths)
+        if (any(hasStruc)) {
+          Struc <- lapply(StrucPaths[hasStruc], readFGT)
+          for (i in which(hasStruc)) {
+            if (!is.null(Struc[[i]]))
+              try({
+                out[[i]] <- c(out[[i]], structure = Struc[[i]][order(-sapply(Struc[[i]], function(x)
+                  x[[1]]$totalscore))])
+              }, silent = TRUE)
+          }
         }
       }
       return(out)

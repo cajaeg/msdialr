@@ -201,7 +201,10 @@ setSampleList <- function(x, sam) {
 getIntensityColumns <- function(x) {
   id_column <- "id"
   sam <- getSampleList(x)
-  match(sam[[id_column]], colnames(x))
+  out <- match(sam[[id_column]], colnames(x))
+  if(any(!is.finite(out)))
+    warning("sam not synchronized with colnames")
+  out
 }
 
 
@@ -260,6 +263,7 @@ removeUnusedIntensityColumns <- function(x, sam = NULL) {
   if (!is.null(sam)) {
     sam_orig <- attr(x, "sam_orig")
     cidx <- match(sam_orig[[id_column]], colnames(x))
+    cidx <- cidx[is.finite(cidx)]
     flt <- cidx[ !colnames(x)[cidx] %in% sam[[id_column]] ]
     if (length(flt) > 0) {
       message(sprintf("Removing %d of %d intensity columns", length(flt), length(cidx)))

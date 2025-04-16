@@ -14,7 +14,7 @@ subtractBlankLevels(
 \arguments{
 \item{x}{MS-DIAL alignment results table}
 
-\item{blank_idx}{index of blank samples; if \code{NULL},
+\item{blank_idx}{numeric or logical index of blank samples; if \code{NULL},
 \code{getSampleList(x)$file_type == "Blank"} is used. If this evaluates to
 NULL, 'x' is returned unchanged.}
 
