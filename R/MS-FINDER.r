@@ -425,14 +425,21 @@ triggerMSFconsole <- function(inputFolder = NULL,
 
 #' Read MSFINDER result files
 #'
-#' @param file path to FGT files which MSFINDER puts in same folder as input MAT files
+#' @param file path to FGT files which MSFINDER puts in same folder as input MAT
+#'   files
+#' @param readStructures logical. Not only read formula results but also
+#'   structure results.
 #'
-#' @return List containing MSFINDER results. First element is match 1, second is match 2 etc. Each element contains data.frames 'cmpd', 'production' and 'neutralloss'. In case structures were found, it further contains further list elements named 'structure*'. Use \code{summarizeMSFresults} to extract the essential parts.
+#' @return List containing MSFINDER results. First element is match 1, second is
+#'   match 2 etc. Each element contains data.frames 'cmpd', 'production' and
+#'   'neutralloss'. In case structures were found, it further contains further
+#'   list elements named 'structure*'. Use \code{summarizeMSFresults} to extract
+#'   the essential parts.
 #' @export
 #'
 #' @examples
-#' fgt <- list.files(system.file("extdata/MSFINDER", package="msdialr"), 
-#'   "*.fgt", 
+#' fgt <- list.files(system.file("extdata/MSFINDER", package="msdialr"),
+#'   "*.fgt",
 #'   full.names = TRUE)
 #' res <- lapply(fgt, readFGT)
 readFGT <-
@@ -598,7 +605,7 @@ summarizeMSFresults <- function(x, rank = 1) {
         ncol = length(useColnames),
         dimnames = list(NULL, useColnames)
       ),
-      stringsAsFactors = F)
+      stringsAsFactors = FALSE)
     cbind(out1, out2, rank = i, stringsAsFactors = F)
   }, .id = NULL)
 }
